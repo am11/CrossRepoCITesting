@@ -1,0 +1,40 @@
+name: Main CI Workflow
+
+on:
+  push:
+    branches: '*'
+    tags: '*'
+  workflow_dispatch:
+    inputs:
+      sourceUser:
+        description: Source user/org
+        required: true
+        default: dotnet
+      sourceBranch:
+        description: Source branch
+        required: true
+        default: main
+
+jobs:
+  build-and-publish:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        run: |
+          SOURCE_USER=${{ github.event.inputs.sourceUser }}
+          SOURCE_BRANCH=${{ github.event.inputs.sourceBranch }}
+          git clone https://github.com/${SOURCE_USER:-dotnet}/runtime . --branch ${SOURCE_BRANCH:-main} --single-branch --depth 1 --quiet && git branch && git rev-parse HEAD
+      - name: Build with CG2
+        run: |
+          ./build.sh clr -c Release
+          cp -r artifacts/bin/coreclr/OSX.x64.Release /tmp/crossgen2-artifacts
+      - name: Build with CG1
+        run: |
+          rm artifacts/bin/coreclr/OSX.x64.Release/System.Private.CoreLib.dll
+          ./build.sh clr -c Release /p:UseCrossgen2=false
+          cp -r artifacts/bin/coreclr/OSX.x64.Release /tmp/crossgen1-artifacts
+      - name: Stats
+        run: |
+          ./dotnet.sh artifacts/bin/coreclr/OSX.x64.Release/R2RDump/R2RDump.dll --diff -i \
+            /tmp/crossgen1-artifacts/System.Private.CoreLib.dll \
+            /tmp/crossgen2-artifacts/System.Private.CoreLib.dll
