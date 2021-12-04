@@ -1,9 +1,11 @@
 name: Main CI Workflow
 
 on:
-  push:
-    branches: '*'
-    tags: '*'
+#  push:
+#    branches: '*'
+#    tags: '*'
+
+  # enable only on-demand
   workflow_dispatch:
     inputs:
       sourceUser:

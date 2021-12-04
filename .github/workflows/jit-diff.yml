@@ -1,0 +1,92 @@
+name: JIT Diffs
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseUser:
+        description: Base user/org
+        required: true
+        default: dotnet
+      baseBranch:
+        description: Base branch
+        required: true
+        default: main
+      diffUser:
+        description: Diff user/org
+        required: true
+        default: am11
+      diffBranch:
+        description: Diff branch
+        required: true
+        default: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Install dependencies
+        run: |
+          wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+          sudo dpkg -i packages-microsoft-prod.deb
+          rm packages-microsoft-prod.deb
+
+          sudo apt update
+          sudo apt install -y liblttng-ust-dev libkrb5-dev libssl-dev libicu-dev llvm-dev dotnet-sdk-6.0 dotnet-sdk-3.1 clang cmake
+
+      - name: Checkout runtime repos
+        run: |
+          BASE_USER=${{ github.event.inputs.baseUser }}
+          BASE_BRANCH=${{ github.event.inputs.baseBranch }}
+          DIFF_USER=${{ github.event.inputs.diffUser }}
+          DIFF_BRANCH=${{ github.event.inputs.diffBranch }}
+
+          git clone https://github.com/${BASE_USER:-dotnet}/runtime runtime-base
+          git clone https://github.com/${DIFF_USER:-dotnet}/runtime runtime-diff
+
+          git -C runtime-diff checkout $DIFF_BRANCH
+          git -C runtime-diff remote add $BASE_USER https://github.com/$BASE_USER/runtime
+          git -C runtime-diff fetch --all
+
+          NEAREST_PARENT="$(git -C runtime-diff merge-base HEAD $BASE_USER/$BASE_BRANCH)"
+          git -C runtime-base checkout $NEAREST_PARENT
+
+      - name: Build runtime-base
+        run: |
+          $(pwd)/runtime-base/build.sh Clr+Libs -c Release && \
+          $(pwd)/runtime-base/build.sh Clr -c Checked && \
+          $(pwd)/runtime-base/src/tests/build.sh Checked generatelayoutonly && \
+          $(pwd)/runtime-base/src/tests/build.sh Release generatelayoutonly
+
+      - name: Build runtime-diff
+        run: |
+          $(pwd)/runtime-diff/build.sh Clr+Libs -c Release && \
+          $(pwd)/runtime-diff/build.sh Clr -c Checked && \
+          $(pwd)/runtime-diff/src/tests/build.sh Checked generatelayoutonly && \
+          $(pwd)/runtime-diff/src/tests/build.sh Release generatelayoutonly
+
+      - name: Build jitutils
+        run: |
+          git clone https://github.com/dotnet/jitutils
+          cd jitutils
+          $(pwd)/bootstrap.sh
+          $(pwd)/build.sh -c Release
+          cd ..
+
+      - name: Collect and analyze jit-diffs
+        run: |
+          export PATH=$PATH:$(pwd)/jitutils/src/jit-dasm/bin/Release/netcoreapp3.1:$(pwd)/jitutils/src/jit-diff/bin/Release/netcoreapp3.1:$(pwd)/jitutils/src/jit-analyze/bin/Release/netcoreapp3.1 
+
+          mkdir /tmp/jit-diffs
+
+          jit-diff diff --output /tmp/jit-diffs -f \
+            --core_root $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
+            --base $(pwd)/runtime-base/artifacts/bin/coreclr/Linux.x64.Checked \
+            --crossgen $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root/crossgen2/crossgen2
+
+          jit-diff diff --output /tmp/jit-diffs -f \
+            --core_root $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
+            --base $(pwd)/runtime-diff/artifacts/bin/coreclr/Linux.x64.Checked \
+            --crossgen $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root/crossgen2/crossgen2
+
+          jit-analyze -b /tmp/jit-diffs/dasmset_1/base -d /tmp/jit-diffs/dasmset_2/base -r -c 100
