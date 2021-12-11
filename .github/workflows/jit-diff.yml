@@ -144,7 +144,7 @@ jobs:
 
           jit-analyze -b /tmp/jit-diffs/pmi/dasmset_1/base -d /tmp/jit-diffs/pmi/dasmset_2/diff -r -c 100 || true
 
-      # runs on tag push
+      # runs when uploadArtifacts value is 1 (true) set from UI, with on-demand run
       - name: Upload artifacts
         if: ${{ github.event.inputs.uploadArtifacts == '1' }}
         run: |
