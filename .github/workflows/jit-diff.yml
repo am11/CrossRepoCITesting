@@ -19,6 +19,10 @@ on:
         description: Diff branch
         required: true
         default: main
+      uploadArtifacts:
+        description: "Upload artifacts (yes: 1, no: 0)"
+        required: true
+        default: 0
 
 jobs:
   build:
@@ -35,6 +39,15 @@ jobs:
 
           sudo apt update
           sudo apt install -y dotnet-sdk-6.0 dotnet-sdk-3.1
+
+      - name: Cleanup
+        run: |
+            echo "Before cleanup:"
+            df -h
+            sudo rm -rf "/usr/local/share/boost" "$AGENT_TOOLSDIRECTORY"
+            sudo apt clean
+            echo "After cleanup:"
+            df -h
 
       - name: Checkout runtime repos
         run: |
@@ -60,12 +73,28 @@ jobs:
           $(pwd)/runtime-base/src/tests/build.sh Checked generatelayoutonly -gcc
           $(pwd)/runtime-base/src/tests/build.sh Release generatelayoutonly -gcc
 
+      - name: Cleanup
+        run: |
+            echo "Before cleanup:"
+            df -h
+            sudo rm -rf $(pwd)/runtime-base/artifacts/obj
+            echo "After cleanup:"
+            df -h
+
       - name: Build runtime-diff
         run: |
           $(pwd)/runtime-diff/build.sh Clr+Libs -c Release -gcc
           $(pwd)/runtime-diff/build.sh Clr -c Checked -gcc
           $(pwd)/runtime-diff/src/tests/build.sh Checked generatelayoutonly -gcc
           $(pwd)/runtime-diff/src/tests/build.sh Release generatelayoutonly -gcc
+
+      - name: Cleanup
+        run: |
+            echo "Before cleanup:"
+            df -h
+            sudo rm -rf $(pwd)/runtime-diff/artifacts/obj
+            echo "After cleanup:"
+            df -h
 
       - name: Build jitutils
         run: |
@@ -79,39 +108,49 @@ jobs:
         run: |
           export PATH=$PATH:$(pwd)/jitutils/bin
 
-          mkdir /tmp/jit-diffs
+          mkdir -p /tmp/jit-diffs/crossgen2
 
-          jit-diff diff --output /tmp/jit-diffs \
+          jit-diff diff --output /tmp/jit-diffs/crossgen2 \
             --base $(pwd)/runtime-base/artifacts/bin/coreclr/Linux.x64.Checked \
             --core_root $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
             --crossgen $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root/crossgen2/crossgen2 \
             --frameworks
 
-          jit-diff diff --output /tmp/jit-diffs \
+          jit-diff diff --output /tmp/jit-diffs/crossgen2 \
             --diff $(pwd)/runtime-diff/artifacts/bin/coreclr/Linux.x64.Checked \
             --core_root $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
             --crossgen $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root/crossgen2/crossgen2 \
             --frameworks
 
-          jit-analyze -b /tmp/jit-diffs/dasmset_1/base -d /tmp/jit-diffs/dasmset_2/diff -r -c 100
+          jit-analyze -b /tmp/jit-diffs/crossgen2/dasmset_1/base -d /tmp/jit-diffs/crossgen2/dasmset_2/diff -r -c 100
 
       - name: Collect and analyze jit-diffs (pmi + framework)
         run: |
           export PATH=$PATH:$(pwd)/jitutils/bin
 
-          rm -rf /tmp/jit-diffs
-          mkdir /tmp/jit-diffs
+          mkdir -p /tmp/jit-diffs/pmi
 
-          jit-diff diff --output /tmp/jit-diffs \
+          jit-diff diff --output /tmp/jit-diffs/pmi \
             --base $(pwd)/runtime-base/artifacts/bin/coreclr/Linux.x64.Checked \
             --base_root runtime-base \
             --core_root $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
             --pmi --frameworks || true
 
-          jit-diff diff --output /tmp/jit-diffs \
+          jit-diff diff --output /tmp/jit-diffs/pmi \
             --diff $(pwd)/runtime-diff/artifacts/bin/coreclr/Linux.x64.Checked \
             --diff_root runtime-diff \
             --core_root $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
             --pmi --frameworks || true
 
-          jit-analyze -b /tmp/jit-diffs/dasmset_1/base -d /tmp/jit-diffs/dasmset_2/diff -r -c 100
+          jit-analyze -b /tmp/jit-diffs/pmi/dasmset_1/base -d /tmp/jit-diffs/pmi/dasmset_2/diff -r -c 100 || true
+
+      # runs on tag push
+      - name: Upload artifacts
+        if: ${{ github.event.inputs.uploadArtifacts == '1' }}
+        run: |
+          tar czf jit-diffs.tar.gz -C /tmp jit-diffs
+          artifacts="-a ./jit-diffs.tar.gz"
+          tag_name="jit-diffs_$GITHUB_RUN_ID"
+          hub release create $artifacts -m "$tag_name" "$tag_name"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
