@@ -19,6 +19,10 @@ on:
         description: Diff branch
         required: true
         default: main
+      uploadArtifacts:
+        description: Upload artifacts (true/false)
+        required: true
+        default: true
 
 jobs:
   build:
@@ -35,6 +39,15 @@ jobs:
 
           sudo apt update
           sudo apt install -y dotnet-sdk-6.0 dotnet-sdk-3.1
+
+      - name: Cleanup
+        run: |
+            echo "Before cleanup:"
+            df -h
+            sudo rm -rf "/usr/local/share/boost" "$AGENT_TOOLSDIRECTORY"
+            sudo apt clean
+            echo "After cleanup:"
+            df -h
 
       - name: Checkout runtime repos
         run: |
@@ -60,12 +73,28 @@ jobs:
           $(pwd)/runtime-base/src/tests/build.sh Checked generatelayoutonly -gcc
           $(pwd)/runtime-base/src/tests/build.sh Release generatelayoutonly -gcc
 
+      - name: Cleanup
+        run: |
+            echo "Before cleanup:"
+            df -h
+            sudo rm -rf $(pwd)/runtime-base/artifacts/obj
+            echo "After cleanup:"
+            df -h
+
       - name: Build runtime-diff
         run: |
           $(pwd)/runtime-diff/build.sh Clr+Libs -c Release -gcc
           $(pwd)/runtime-diff/build.sh Clr -c Checked -gcc
           $(pwd)/runtime-diff/src/tests/build.sh Checked generatelayoutonly -gcc
           $(pwd)/runtime-diff/src/tests/build.sh Release generatelayoutonly -gcc
+
+      - name: Cleanup
+        run: |
+            echo "Before cleanup:"
+            df -h
+            sudo rm -rf $(pwd)/runtime-diff/artifacts/obj
+            echo "After cleanup:"
+            df -h
 
       - name: Build jitutils
         run: |
@@ -115,3 +144,14 @@ jobs:
             --pmi --frameworks || true
 
           jit-analyze -b /tmp/jit-diffs/dasmset_1/base -d /tmp/jit-diffs/dasmset_2/diff -r -c 100
+
+      # runs on tag push
+      - name: Upload artifacts
+        if: ${{ github.event.inputs.uploadArtifacts != '' }}
+        run: |
+          tar czf jit-diffs.tar.gz /tmp/jit-diffs
+          artifacts="-a ./jit-diffs.tar.gz"
+          tag_name="${{ github.event.inputs.uploadArtifacts }}"
+          hub release create $artifacts -m "$tag_name" "$tag_name"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
