@@ -27,7 +27,7 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt install -y liblttng-ust-dev libkrb5-dev libssl-dev libicu-dev llvm-dev clang cmake
+          sudo apt install -y liblttng-ust-dev libkrb5-dev libssl-dev libicu-dev g++ cmake
 
           wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
           sudo dpkg -i packages-microsoft-prod.deb
@@ -55,17 +55,17 @@ jobs:
 
       - name: Build runtime-base
         run: |
-          $(pwd)/runtime-base/build.sh Clr+Libs -c Release && \
-          $(pwd)/runtime-base/build.sh Clr -c Checked && \
-          $(pwd)/runtime-base/src/tests/build.sh Checked generatelayoutonly && \
-          $(pwd)/runtime-base/src/tests/build.sh Release generatelayoutonly
+          $(pwd)/runtime-base/build.sh Clr+Libs -c Release -gcc
+          $(pwd)/runtime-base/build.sh Clr -c Checked -gcc
+          $(pwd)/runtime-base/src/tests/build.sh Checked generatelayoutonly -gcc
+          $(pwd)/runtime-base/src/tests/build.sh Release generatelayoutonly -gcc
 
       - name: Build runtime-diff
         run: |
-          $(pwd)/runtime-diff/build.sh Clr+Libs -c Release && \
-          $(pwd)/runtime-diff/build.sh Clr -c Checked && \
-          $(pwd)/runtime-diff/src/tests/build.sh Checked generatelayoutonly && \
-          $(pwd)/runtime-diff/src/tests/build.sh Release generatelayoutonly
+          $(pwd)/runtime-diff/build.sh Clr+Libs -c Release -gcc
+          $(pwd)/runtime-diff/build.sh Clr -c Checked -gcc
+          $(pwd)/runtime-diff/src/tests/build.sh Checked generatelayoutonly -gcc
+          $(pwd)/runtime-diff/src/tests/build.sh Release generatelayoutonly -gcc
 
       - name: Build jitutils
         run: |
