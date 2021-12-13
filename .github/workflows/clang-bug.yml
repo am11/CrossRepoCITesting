@@ -1,0 +1,41 @@
+name: clang bug
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repro
+        run: |
+          sudo apt install -y clang
+
+          cat > foo.cpp <<EOF
+          static const int C = 64 * 1024 * 1024;
+
+          struct Foo
+          {
+              int a;
+              int b;
+          };
+
+          static Foo* foo;
+
+          int main() {
+
+              foo = new Foo[C];
+
+              /* Workaround
+
+              auto temp = new Foo[C];
+              foo = temp;
+
+              */
+
+              return 0;
+          }
+          EOF
+
+          clang++ foo.cpp
