@@ -114,15 +114,15 @@ jobs:
             --base $(pwd)/runtime-base/artifacts/bin/coreclr/Linux.x64.Checked \
             --core_root $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
             --crossgen $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root/crossgen2/crossgen2 \
-            --frameworks
+            --frameworks || true
 
           jit-diff diff --output /tmp/jit-diffs/crossgen2 \
             --diff $(pwd)/runtime-diff/artifacts/bin/coreclr/Linux.x64.Checked \
             --core_root $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
             --crossgen $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root/crossgen2/crossgen2 \
-            --frameworks
+            --frameworks || true
 
-          jit-analyze -b /tmp/jit-diffs/crossgen2/dasmset_1/base -d /tmp/jit-diffs/crossgen2/dasmset_2/diff -r -c 100
+          jit-analyze -b /tmp/jit-diffs/crossgen2/dasmset_1/base -d /tmp/jit-diffs/crossgen2/dasmset_2/diff -r -c 100 || true
 
       - name: Collect and analyze jit-diffs (pmi + framework)
         run: |
