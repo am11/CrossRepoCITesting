@@ -19,6 +19,10 @@ on:
         description: Diff branch
         required: true
         default: main
+      diffCloneName:
+        description: Diff clone name
+        required: true
+        default: runtime
       uploadArtifacts:
         description: "Upload artifacts (yes: 1, no: 0)"
         required: true
@@ -55,9 +59,10 @@ jobs:
           BASE_BRANCH=${{ github.event.inputs.baseBranch }}
           DIFF_USER=${{ github.event.inputs.diffUser }}
           DIFF_BRANCH=${{ github.event.inputs.diffBranch }}
+          DIFF_CLONE_NAME=${{ github.event.inputs.diffCloneName }}
 
           git clone https://github.com/${BASE_USER:-dotnet}/runtime runtime-base
-          git clone https://github.com/${DIFF_USER:-dotnet}/runtime runtime-diff
+          git clone https://github.com/${DIFF_USER:-dotnet}/${DIFF_CLONE_NAME:-runtime} runtime-diff
 
           git -C runtime-diff checkout $DIFF_BRANCH
           git -C runtime-diff remote add $BASE_USER https://github.com/$BASE_USER/runtime
