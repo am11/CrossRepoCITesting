@@ -1,5 +1,5 @@
 #image: Visual Studio 2019
-image: macos
+image: macos-monterey
 #image: ubuntu
 
 init:
