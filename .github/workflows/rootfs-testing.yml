@@ -1,0 +1,21 @@
+name: test 22.04
+
+on:
+  push:
+    branches: '*'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Run in 22.04 VM
+        run: |
+          sudo sh -c 'apt update && apt install -y git qemu-system qemu-user-static build-essential debootstrap'
+          git clone https://github.com/dotnet/arcade --single-branch --depth 1
+          sudo arcade/eng/common/cross/build-rootfs.sh riscv64
+      - name: Run in 22.04 container
+        run: |
+          docker run --privileged ubuntu:22.04 sh -c '
+            apt update && apt install -y git qemu-system qemu-user-static build-essential debootstrap
+            git clone https://github.com/dotnet/arcade --single-branch --depth 1
+            arcade/eng/common/cross/build-rootfs.sh riscv64'
