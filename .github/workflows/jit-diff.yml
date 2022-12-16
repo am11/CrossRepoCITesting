@@ -37,12 +37,12 @@ jobs:
         run: |
           sudo apt install -y liblttng-ust-dev libkrb5-dev libssl-dev libicu-dev g++ llvm-dev clang
 
-          wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+          wget https://packages.microsoft.com/config/ubuntu/22.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
           sudo dpkg -i packages-microsoft-prod.deb
           rm packages-microsoft-prod.deb
 
           sudo apt update
-          sudo apt install -y dotnet-sdk-6.0 dotnet-sdk-3.1
+          sudo apt install -y dotnet-sdk-6.0 dotnet-sdk-7.0
 
       - name: Cleanup
         run: |
