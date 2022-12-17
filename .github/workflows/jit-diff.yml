@@ -110,17 +110,17 @@ jobs:
 
           mkdir -p /tmp/jit-diffs/crossgen2
 
-          (jit-diff diff --output /tmp/jit-diffs/crossgen2 \
+          jit-diff diff --output /tmp/jit-diffs/crossgen2 \
             --base $(pwd)/runtime-base/artifacts/bin/coreclr/Linux.x64.Checked \
             --core_root $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
             --crossgen $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root/crossgen2/crossgen2 \
-            --frameworks || true) 2>&1 | while read line; do df -h; echo "$line"; done
+            --frameworks || true | while read line; do df -h; echo "$line"; done
 
-          (jit-diff diff --output /tmp/jit-diffs/crossgen2 \
+          jit-diff diff --output /tmp/jit-diffs/crossgen2 \
             --diff $(pwd)/runtime-diff/artifacts/bin/coreclr/Linux.x64.Checked \
             --core_root $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
             --crossgen $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root/crossgen2/crossgen2 \
-            --frameworks || true) 2>&1 | while read line; do df -h; echo "$line"; done
+            --frameworks || true | while read line; do df -h; echo "$line"; done
 
           jit-analyze -b /tmp/jit-diffs/crossgen2/dasmset_1/base -d /tmp/jit-diffs/crossgen2/dasmset_2/diff -r -c 100 || true
 
@@ -130,17 +130,17 @@ jobs:
 
           mkdir -p /tmp/jit-diffs/pmi
 
-          (jit-diff diff --output /tmp/jit-diffs/pmi \
+          jit-diff diff --output /tmp/jit-diffs/pmi \
             --base $(pwd)/runtime-base/artifacts/bin/coreclr/Linux.x64.Checked \
             --base_root runtime-base \
             --core_root $(pwd)/runtime-base/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
-            --pmi --frameworks || true) 2>&1 | while read line; do df -h; echo "$line"; done
+            --pmi --frameworks || true | while read line; do df -h; echo "$line"; done
 
-          (jit-diff diff --output /tmp/jit-diffs/pmi \
+          jit-diff diff --output /tmp/jit-diffs/pmi \
             --diff $(pwd)/runtime-diff/artifacts/bin/coreclr/Linux.x64.Checked \
             --diff_root runtime-diff \
             --core_root $(pwd)/runtime-diff/artifacts/tests/coreclr/Linux.x64.Release/Tests/Core_Root \
-            --pmi --frameworks || true) 2>&1 | while read line; do df -h; echo "$line"; done
+            --pmi --frameworks || true | while read line; do df -h; echo "$line"; done
 
           jit-analyze -b /tmp/jit-diffs/pmi/dasmset_1/base -d /tmp/jit-diffs/pmi/dasmset_2/diff -r -c 100 || true
 
