@@ -35,7 +35,7 @@ jobs:
     steps:
       - name: Install dependencies
         run: |
-          sudo apt install -y liblttng-ust-dev libkrb5-dev libssl-dev libicu-dev g++ llvm-dev clang dotnet6 dotnet7
+          sudo apt install -y liblttng-ust-dev libkrb5-dev libssl-dev libicu-dev g++ llvm-dev clang dotnet6
 
           dotnet --info
 
