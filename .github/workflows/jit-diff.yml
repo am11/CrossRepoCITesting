@@ -42,7 +42,9 @@ jobs:
           rm packages-microsoft-prod.deb
 
           sudo apt update
-          sudo apt install -y dotnet-sdk-6.0 dotnet-runtime-6.0 dotnet-sdk-7.0
+          sudo apt install -y dotnet-sdk-6.0
+          sudo apt install -y dotnet-sdk-7.0
+
           dotnet --info
 
       - name: Cleanup
