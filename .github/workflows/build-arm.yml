@@ -26,9 +26,6 @@ jobs:
           SOURCE_USER=${{ github.event.inputs.sourceUser }}
           SOURCE_BRANCH=${{ github.event.inputs.sourceBranch }}
           git clone https://github.com/${SOURCE_USER:-dotnet}/runtime . --branch ${SOURCE_BRANCH:-main} --single-branch --depth 1 --quiet && git branch && git rev-parse HEAD
-          git remote add dotnet https://github.com/dotnet/runtime
-          git fetch --all
-          git merge --no-ff --no-edit dotnet/main
       - name: Build and pack
         run: |
           docker run -e ROOTFS_DIR=/crossrootfs/arm --rm -v$(pwd):/runtime mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-arm \
