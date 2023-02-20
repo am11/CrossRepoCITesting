@@ -32,8 +32,8 @@ jobs:
             /runtime/build.sh clr+libs -cross -a arm
           docker run -e ROOTFS_DIR=/crossrootfs/arm --rm -v$(pwd):/runtime mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-arm \
             /runtime/src/tests/build.sh -cross -arm -p:LibrariesConfiguration=Debug
-          sudo rm -rf artifacts/obj
-          tar czf artifacts.tar.gz artifacts/
+          sudo mv artifacts/tests /tmp/artifacts
+          tar czf artifacts.tar.gz /tmp/artifacts
       - name: Upload artifacts
         run: |
           git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
