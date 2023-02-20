@@ -36,6 +36,8 @@ jobs:
 #          tar czf artifacts.tar.gz artifacts/
       - name: Upload artifacts
         run: |
+          git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
+          cd repo
           echo "foo" > ./artifacts.tar.gz
           artifacts="-a ./artifacts.tar.gz"
           tag_name="build-arm-$GITHUB_RUN_ID"
