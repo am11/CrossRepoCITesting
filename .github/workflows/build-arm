@@ -1,0 +1,45 @@
+name: Main CI Workflow
+
+on:
+#  push:
+#    branches: '*'
+#    tags: '*'
+
+  # enable only on-demand
+  workflow_dispatch:
+    inputs:
+      sourceUser:
+        description: Source user/org
+        required: true
+        default: dotnet
+      sourceBranch:
+        description: Source branch
+        required: true
+        default: main
+
+jobs:
+  build-and-publish:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        run: |
+          SOURCE_USER=${{ github.event.inputs.sourceUser }}
+          SOURCE_BRANCH=${{ github.event.inputs.sourceBranch }}
+          git clone https://github.com/${SOURCE_USER:-dotnet}/runtime . --branch ${SOURCE_BRANCH:-main} --single-branch --depth 1 --quiet && git branch && git rev-parse HEAD
+          git remote add dotnet https://github.com/dotnet/runtime
+          git merge --no-ff --no-edit dotnet/main
+      - name: Build and pack
+        run: |
+          docker run -e ROOTFS_DIR=/crossrootfs/arm -v$(pwd):/runtime mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-arm \
+            /runtime/build.sh clr+libs -cross -a arm
+          docker run -e ROOTFS_DIR=/crossrootfs/arm -v$(pwd):/runtime mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-arm \
+            /runtime/src/tests/build.sh -cross -arm -p:LibrariesConfiguration=Debug
+          rm -rf artifacts/obj
+          tar czf artifacts.tar.gz artifacts/
+      - name: Upload artifacts
+        run: |
+          artifacts="-a ./artifacts.tar.gz"
+          tag_name="build-arm-$GITHUB_RUN_ID"
+          hub release create $artifacts -m "$tag_name" "$tag_name"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
