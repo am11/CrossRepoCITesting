@@ -1,4 +1,4 @@
-name: Main CI Workflow
+name: build runtime on linux-arm
 
 on:
 #  push:
