@@ -8,11 +8,11 @@ on:
   # enable only on-demand
   workflow_dispatch:
     inputs:
-      sourceUser:
+      host:
         description: Host
         required: true
         default: 22.04
-      sourceBranch:
+      arch:
         description: Arch
         required: true
         default: riscv64
