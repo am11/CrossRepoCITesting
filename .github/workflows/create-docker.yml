@@ -1,0 +1,63 @@
+name: build runtime on linux-arm
+
+on:
+#  push:
+#    branches: '*'
+#    tags: '*'
+
+  # enable only on-demand
+  workflow_dispatch:
+    inputs:
+      sourceUser:
+        description: Host
+        required: true
+        default: 22.04
+      sourceBranch:
+        description: Arch
+        required: true
+        default: riscv64
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        run: |
+          SOURCE_USER=${{ github.event.inputs.sourceUser }}
+          SOURCE_BRANCH=${{ github.event.inputs.sourceBranch }}
+          git clone https://github.com/dotnet/dotnet-buildtools-prereqs-docker .
+      - name: Install PowerShell
+        run: |
+          # Update the list of packages
+          sudo apt-get update
+          # Install pre-requisite packages.
+          sudo apt-get install -y wget apt-transport-https software-properties-common
+          # Download the Microsoft repository GPG keys
+          wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+          # Register the Microsoft repository GPG keys
+          sudo dpkg -i packages-microsoft-prod.deb
+          # Update the list of packages after we added packages.microsoft.com
+          sudo apt-get update
+          # Install PowerShell
+          sudo apt-get install -y powershell
+      - name: Build image
+        run: |
+          pwsh build.ps1 -DockerfilePath "*ubuntu/22.04/coredeps*"'
+          pwsh build.ps1 -DockerfilePath "*ubuntu/22.04/crossdeps*"'
+          pwsh build.ps1 -DockerfilePath "*ubuntu/22.04/cross/riscv64*"
+
+          HOST=${{ github.event.inputs.host }}
+          ARCH=${{ github.event.inputs.arch }}
+          docker save mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-$HOST-cross-$ARCH > ubuntu-$HOST-cross-$ARCH.tar
+      - name: Upload artifacts
+        run: |
+          git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
+          cd repo
+
+          HOST=${{ github.event.inputs.host }}
+          ARCH=${{ github.event.inputs.arch }}
+          artifacts="-a ../ubuntu-$HOST-cross-$ARCH.tar"
+          tag_name="build-arm-$GITHUB_RUN_ID"
+          hub release create $artifacts -m "$tag_name" "$tag_name"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
