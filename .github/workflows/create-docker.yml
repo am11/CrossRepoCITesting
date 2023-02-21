@@ -23,8 +23,6 @@ jobs:
     steps:
       - name: Checkout code
         run: |
-          SOURCE_USER=${{ github.event.inputs.sourceUser }}
-          SOURCE_BRANCH=${{ github.event.inputs.sourceBranch }}
           git clone https://github.com/dotnet/dotnet-buildtools-prereqs-docker .
       - name: Install PowerShell
         run: |
