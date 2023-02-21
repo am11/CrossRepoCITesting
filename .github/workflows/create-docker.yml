@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout code
         run: |
-          git clone https://github.com/dotnet/dotnet-buildtools-prereqs-docker .
+          git clone https://github.com/am11/dotnet-buildtools-prereqs-docker .
       - name: Install PowerShell
         run: |
           # Update the list of packages
@@ -37,7 +37,7 @@ jobs:
           # Update the list of packages after we added packages.microsoft.com
           sudo apt-get update
           # Install PowerShell
-          sudo apt-get install -y powershell debian-archive-keyring
+          sudo apt-get install -y powershell
       - name: Build image
         run: |
           HOST=${{ github.event.inputs.host }}
