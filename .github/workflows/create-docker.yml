@@ -42,12 +42,13 @@ jobs:
           sudo apt-get install -y powershell
       - name: Build image
         run: |
-          pwsh build.ps1 -DockerfilePath "*ubuntu/22.04/coredeps*"'
-          pwsh build.ps1 -DockerfilePath "*ubuntu/22.04/crossdeps*"'
-          pwsh build.ps1 -DockerfilePath "*ubuntu/22.04/cross/riscv64*"
-
           HOST=${{ github.event.inputs.host }}
           ARCH=${{ github.event.inputs.arch }}
+
+          pwsh build.ps1 -DockerfilePath "*ubuntu/$HOST/coredeps*"
+          pwsh build.ps1 -DockerfilePath "*ubuntu/$HOST/crossdeps*"
+          pwsh build.ps1 -DockerfilePath "*ubuntu/$HOST/cross/$ARCH*"
+
           docker save mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-$HOST-cross-$ARCH > ubuntu-$HOST-cross-$ARCH.tar
       - name: Upload artifacts
         run: |
