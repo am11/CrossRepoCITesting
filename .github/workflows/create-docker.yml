@@ -1,4 +1,4 @@
-name: build runtime on linux-arm
+name: create docker image
 
 on:
 #  push:
