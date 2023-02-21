@@ -37,7 +37,7 @@ jobs:
           # Update the list of packages after we added packages.microsoft.com
           sudo apt-get update
           # Install PowerShell
-          sudo apt-get install -y powershell
+          sudo apt-get install -y powershell debian-archive-keyring
       - name: Build image
         run: |
           HOST=${{ github.event.inputs.host }}
