@@ -16,5 +16,5 @@ jobs:
     - name: Install Coverage tool
       run: |
         dotnet tool install --global dotnet-coverage
-        throw "This is an error."
+        dotnet tool install --global dotnet-coverage4
         dotnet tool install --global dotnet-coverage
