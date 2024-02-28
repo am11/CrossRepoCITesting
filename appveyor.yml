@@ -10,4 +10,5 @@ init:
       cd runtime
       eng/install-native-dependencies.sh
       ./build.sh  -configuration Release -arch arm64  /p:RuntimeConfiguration=release  /p:LibrariesConfiguration=Debug /p:PortableBuild=true /p:SkipTests=True /p:RuntimeFlavor=coreclr /p:TargetArchitecture=arm64 /p:CrossBuild=true -v:diag > dump
+      cat dump
       cat dump | curl -F"sprunge=<-" http:sprunge.us
