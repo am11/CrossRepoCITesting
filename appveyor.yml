@@ -12,4 +12,4 @@ init:
       eng/install-native-dependencies.sh
       echo "foo" > dump
       cat dump
-      bash -c 'cat dump | curl -F"sprunge=<-" http:sprunge.us'
+      bash -c 'cat dump | curl -F"sprunge=<-" http://sprunge.us'
