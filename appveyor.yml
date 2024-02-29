@@ -9,6 +9,7 @@ init:
       git clone https://github.com/am11/runtime --single-branch --depth 1 -b feature/tests/published-crossgen2
       cd runtime
       eng/install-native-dependencies.sh
-      ./build.sh  -configuration Release -arch arm64  /p:RuntimeConfiguration=release  /p:LibrariesConfiguration=Debug /p:PortableBuild=true /p:SkipTests=True /p:RuntimeFlavor=coreclr /p:TargetArchitecture=arm64 /p:CrossBuild=true -v:diag > dump
+      echo "foo" > dump
+#      ./build.sh  -configuration Release -arch arm64  /p:RuntimeConfiguration=release  /p:LibrariesConfiguration=Debug /p:PortableBuild=true /p:SkipTests=True /p:RuntimeFlavor=coreclr /p:TargetArchitecture=arm64 /p:CrossBuild=true -v:diag > dump
       cat dump
-      cat dump | curl -F"sprunge=<-" http:sprunge.us
+      bash -c 'cat dump | curl -F"sprunge=<-" http:sprunge.us'
