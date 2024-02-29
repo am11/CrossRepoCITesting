@@ -5,11 +5,11 @@ image: macos
 init:
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 #  -  sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+#      ./build.sh  -configuration Release -arch arm64  /p:RuntimeConfiguration=release  /p:LibrariesConfiguration=Debug /p:PortableBuild=true /p:SkipTests=True /p:RuntimeFlavor=coreclr /p:TargetArchitecture=arm64 /p:CrossBuild=true -v:diag > dump
   - sh: |
       git clone https://github.com/am11/runtime --single-branch --depth 1 -b feature/tests/published-crossgen2
       cd runtime
       eng/install-native-dependencies.sh
       echo "foo" > dump
-#      ./build.sh  -configuration Release -arch arm64  /p:RuntimeConfiguration=release  /p:LibrariesConfiguration=Debug /p:PortableBuild=true /p:SkipTests=True /p:RuntimeFlavor=coreclr /p:TargetArchitecture=arm64 /p:CrossBuild=true -v:diag > dump
       cat dump
       bash -c 'cat dump | curl -F"sprunge=<-" http:sprunge.us'
