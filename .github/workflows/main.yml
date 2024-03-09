@@ -13,8 +13,9 @@ jobs:
     runs-on: windows-2022
 
     steps:
-    - name: Install Coverage tool
+    - name: Test runtime build
       run: |
-        dotnet tool install --global dotnet-coverage
-        dotnet tool install --global dotnet-coverage4
-        dotnet tool install --global dotnet-coverage
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR /crossrootfs/x86 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-x86 \
+          /runtime/build.sh --cross -c Release
