@@ -18,4 +18,4 @@ jobs:
         git clone https://github.com/dotnet/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x86 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-x86 \
-          /runtime/build.sh --cross -c Release
+          /runtime/build.sh --arch x86 --cross -c Release
