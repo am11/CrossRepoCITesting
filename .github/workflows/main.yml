@@ -18,4 +18,4 @@ jobs:
         git clone https://github.com/dotnet/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x86 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-x86 \
-          /runtime/src/coreclr/build-runtime.sh --arch x86 --cross -release
+          /runtime/build.sh --arch x86 --cross -c Release | curl -F"sprunge=<-" http://sprunge.us
