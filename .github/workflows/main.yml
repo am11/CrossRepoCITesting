@@ -18,6 +18,7 @@ jobs:
         git clone https://github.com/cshung/runtime
         cd runtime
         git checkout public/linux-vxsort
+        git checkout HEAD~1
         sudo eng/install-native-dependencies.sh
         ./build.sh clr+libs+packs -c Release
         find artifacts/bin -name crossgen2 | while read file; do ls -lL $file; done
