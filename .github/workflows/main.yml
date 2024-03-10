@@ -15,7 +15,13 @@ jobs:
     steps:
     - name: Test runtime build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1
-        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x86 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-x86 \
-          /runtime/build.sh --arch x86 --cross -c Release | curl -F"sprunge=<-" http://sprunge.us
+        git clone https://github.com/cshung/runtime
+        cd runtime
+        git checkout public/linux-vxsort
+        sudo eng/install-native-dependencies.sh
+        ./build.sh clr+libs+packs -c Release
+        find artifacts/bin -name crossgen2 | while read file; do ls -lL $file; done
+        git checkout HEAD~11
+        rm -rf artifacts
+        ./build.sh clr+libs+packs -c Release
+        find artifacts/bin -name crossgen2 | while read file; do ls -lL $file; done
