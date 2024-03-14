@@ -23,6 +23,11 @@ jobs:
            ./build.sh --clean-while-building -- -p:TargetRid=ol.9.3-x64'
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
+        ls
+        ls ..
+        ls ../vmr
+        ls ../vmr/artifacts
+        ls ../vmr/artifacts/assets
         ls ../vmr/artifacts/assets/Release/
         artifacts="-a ../vmr/artifacts/assets/Release/dotnet-sdk-*.tar.gz"
         tag_name="dotnet-ol.9.3-$GITHUB_RUN_ID"
