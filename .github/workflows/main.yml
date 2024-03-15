@@ -20,7 +20,7 @@ jobs:
           'dnf install --setopt tsflags=nodocs --refresh -y  automake clang cmake curl findutils git krb5-devel libicu-devel lldb-devel llvm lttng-ust openssl-devel python3 tar zlib-devel;
            dnf --enablerepo=ol9_codeready_builder install lttng-ust-devel;
            ./prep.sh;
-           ./build.sh --clean-while-building -- -p:TargetRid=ol.9.3-x64'
+           ./build.sh --clean-while-building -- -p:TargetRid=ol.9.1-x64'
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
         ls ../vmr/artifacts/x64/Release/
