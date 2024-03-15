@@ -26,4 +26,5 @@ jobs:
         ls ../vmr/artifacts/x64/Release/
         artifacts="-a ../vmr/artifacts/x64/Release/dotnet-sdk-*.tar.gz"
         tag_name="dotnet-ol.9.3-$GITHUB_RUN_ID"
+        sudo apt install -y hub
         hub release create $artifacts -m "$tag_name" "$tag_name"
