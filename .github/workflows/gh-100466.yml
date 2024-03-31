@@ -1,0 +1,76 @@
+name: dotnet/runtime/issues/100466
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: .NET 8
+      run: |
+        dotnet --info
+        dotnet new console -n gh-100466
+        cd gh-100466
+        cat gh-100466.csproj
+
+        cat > Program.cs <<EOF
+        var foo = new Foo<Bar>();
+        Console.WriteLine(foo.ToString());
+        Console.WriteLine(Bar.X);
+        
+        struct Foo<T> where T : IBar
+        {
+            static Foo()
+            {
+                T.Set();
+            }
+        }
+        
+        struct Bar : IBar
+        {
+            public static int X;
+            public static void Set()
+            {
+                X = 42;
+            }
+        }
+        
+        interface IBar
+        {
+            abstract static void Set();
+        }
+        EOF
+
+        dotnet run -c Release
+
+        dotnet publish -p:PublishAot=true -c Release -o out
+        out/gh-100466
+
+    - name: .NET 9
+      run: |
+        mkdir "$HOME/.dotnet9"
+        curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --quality daily --channel 9.0 --install-dir "$HOME/.dotnet9"
+        
+        cat > "$HOME/.nuget/NuGet/NuGet.Config" <<EOF
+        <?xml version="1.0" encoding="utf-8"?>
+        <configuration>
+          <packageSources>
+            <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+            <add key="dotnet$VERSION" value="https://pkgs.dev.azure.com/dnceng/public/_packaging/dotnet9/nuget/v3/index.json" />
+          </packageSources>
+        </configuration>
+        EOF
+
+        ~/.dotnet9/dotnet --info
+        cd gh-100466
+        sed -i 's/net8/net9/' gh-100466.csproj
+        cat gh-100466.csproj
+
+        ~/.dotnet9/dotnet run -c Release
+
+        ~/.dotnet9/dotnet publish -p:PublishAot=true -c Release -o out
+        out/gh-100466
+
+    
