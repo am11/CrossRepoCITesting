@@ -2,7 +2,11 @@ macos_instance:
   image: ghcr.io/cirruslabs/macos-monterey-base:latest
 
 mac_task:
-  script: brew install --cask docker; open -a docker; cd dir1; docker build . -t testdir1
+  script: |
+    brew install --cask docker
+    open /Applications/Docker.app --args --accept-license
+    cd dir1
+    docker build . -t testdir1
 
 ubuntu22_spicy_task:
   container:
