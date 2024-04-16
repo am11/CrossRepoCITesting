@@ -1,6 +1,9 @@
-macos_instance:
-  image: ghcr.io/cirruslabs/macos-monterey-base:latest
+#macos_instance:
+#  image: ghcr.io/cirruslabs/macos-monterey-base:latest
 
-mac_task:
+#mac_task:
+#  script: date
 
-  script: date
+ubuntu22_spicy_task:
+  container:
+    dockerfile: dir1/Dockerfile
