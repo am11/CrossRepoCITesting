@@ -5,7 +5,7 @@ mac_task:
   script: |
     brew install --cask docker
     open /Applications/Docker.app --args --accept-license &
-    sleep 20
+    sleep 100
     cd dir1
     docker build . -t testdir1
 
