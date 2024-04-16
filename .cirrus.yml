@@ -4,8 +4,8 @@ macos_instance:
 mac_task:
   script: |
     brew install --cask --no-quarantine docker
-    open /Applications/Docker.app --args --accept-license
-    sleep 100
+    brew install orbstack
+    orb
     docker run hello-world
 
 ubuntu22_spicy_task:
