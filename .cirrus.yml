@@ -3,7 +3,7 @@ macos_instance:
 
 mac_task:
   script: |
-    brew install --cask docker
+    brew install --cask --no-quarantine docker
     open /Applications/Docker.app --args --accept-license &
     sleep 100
     docker run hello-world
