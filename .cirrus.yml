@@ -6,8 +6,7 @@ mac_task:
     brew install --cask docker
     open /Applications/Docker.app --args --accept-license &
     sleep 100
-    cd dir1
-    docker build . -t testdir1
+    docker run hello-world
 
 ubuntu22_spicy_task:
   container:
