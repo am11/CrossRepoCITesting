@@ -18,4 +18,5 @@ jobs:
           echo "FROM --platform=linux/amd64 ubuntu:latest" > Dockerfile
           echo "RUN apt update && apt install -y debootstrap" >> Dockerfile
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
+          dir "C:\\Program Files\Docker\Docker\DockerCli.exe"
           docker build . -t test1
