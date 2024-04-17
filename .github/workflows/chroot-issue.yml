@@ -15,7 +15,7 @@ jobs:
         run: |
           mkdir test1
           cd test1
-          echo "FROM ubuntu:latest" > Dockerfile
+          echo "FROM --platform=linux/amd64 ubuntu:latest" > Dockerfile
           echo "RUN apt update && apt install -y debootstrap" >> Dockerfile
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
           docker build . -t test1
