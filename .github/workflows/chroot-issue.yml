@@ -19,6 +19,7 @@ jobs:
           echo "RUN apt update && apt install -y debootstrap" >> Dockerfile
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
           gcm docker
-          choco install -y docker-for-windows
-          &"${env:ProgramFiles}\Docker\Docker\DockerCli.exe" -SwitchLinuxEngine
-          docker build . -t test1
+          wsl -e uname -a
+          #choco install -y docker-for-windows
+          #&"${env:ProgramFiles}\Docker\Docker\DockerCli.exe" -SwitchLinuxEngine
+          wsl -e docker build . -t test1
