@@ -20,6 +20,7 @@ jobs:
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
           gcm docker
           wsl -e uname -a
+          wsl --install -d Ubuntu
           #choco install -y docker-for-windows
           #&"${env:ProgramFiles}\Docker\Docker\DockerCli.exe" -SwitchLinuxEngine
           wsl -e docker build . -t test1
