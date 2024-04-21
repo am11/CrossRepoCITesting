@@ -20,7 +20,7 @@ jobs:
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
           gcm docker
           wsl --update
-          Invoke-WebRequest https://github.com/am11/VoidWSL/releases/download/24032100/void-x86_64-musl.zip -O void-x86_64-musl.zip
+          Invoke-WebRequest https://github.com/am11/VoidWSL/releases/download/24032100/void-x86_64-musl.zip -Out void-x86_64-musl.zip
           Expand-Archive .\void-x86_64-musl.zip .\void-linux
           ls void-linux\
           #wsl --install -d alpine
