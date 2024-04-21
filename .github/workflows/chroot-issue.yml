@@ -27,6 +27,7 @@ jobs:
           echo command-end
           #wsl --install -d openSUSE-Tumbleweed
           #wsl -e uname -a
+          wsl --list
           #choco install -y docker-for-windows
           #&"${env:ProgramFiles}\Docker\Docker\DockerCli.exe" -SwitchLinuxEngine
           #wsl -e docker build . -t test1
