@@ -19,7 +19,7 @@ jobs:
           echo "RUN apt update && apt install -y debootstrap" >> Dockerfile
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
           gcm docker
-          wsl --update
+          wsl --update --web-download
           Invoke-WebRequest https://github.com/am11/VoidWSL/releases/download/24032100/void-x86_64-musl.zip -Out void-x86_64-musl.zip
           Expand-Archive .\void-x86_64-musl.zip .\void-linux
           echo command-start
@@ -27,7 +27,7 @@ jobs:
           echo command-end
           #wsl --install -d openSUSE-Tumbleweed
           #wsl -e uname -a
-          wsl --list
+          wsl --list --verbose
           #choco install -y docker-for-windows
           #&"${env:ProgramFiles}\Docker\Docker\DockerCli.exe" -SwitchLinuxEngine
           #wsl -e docker build . -t test1
