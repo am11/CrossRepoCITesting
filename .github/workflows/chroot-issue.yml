@@ -19,6 +19,7 @@ jobs:
           echo "RUN apt update && apt install -y debootstrap" >> Dockerfile
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
           gcm docker
+          wsl --version
           wsl --install -d Ubuntu
           wsl -e uname -a
           #choco install -y docker-for-windows
