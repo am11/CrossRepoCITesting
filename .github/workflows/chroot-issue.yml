@@ -20,5 +20,5 @@ jobs:
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
           gcm docker
           choco install -y docker-for-windows
-          dir "${env:ProgramFiles}\Docker\Docker\DockerCli.exe"
+          "${env:ProgramFiles}\Docker\Docker\DockerCli.exe" -SwitchDaemon
           docker build . -t test1
