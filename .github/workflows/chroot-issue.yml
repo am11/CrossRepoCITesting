@@ -17,9 +17,9 @@ jobs:
           mkdir test1
           cd test1
           echo 'FROM --platform=linux/amd64 ubuntu:latest' > Dockerfile
-          echo 'RUN apt update && apt install -y debootstrap' >> Dockerfile
+          echo 'RUN apt update && apt install -y debootstrap libext2fs2 qemu-user-static' >> Dockerfile
           echo 'RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/ || true' >> Dockerfile
-          echo 'RUN cat /tmp/test1/debootstrap/debootstrap.log' >> Dockerfile
+#          echo 'RUN cat /tmp/test1/debootstrap/debootstrap.log' >> Dockerfile
           docker build --progress=plain -t minbase-testing .
           sudo sh -c 'apt update && apt install -y debootstrap libext2fs2 qemu-user-static'
           sudo debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/ || true
