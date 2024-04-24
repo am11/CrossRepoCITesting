@@ -3,7 +3,21 @@
 image: Ubuntu2004
 
 init:
-  - sh: git clone https://github.com/am11/CrossRepoCITesting; cd CrossRepoCITesting/dir1; docker build --progress=plain -t dir1-testing .
+  - sh: |
+    docker run --privileged --rm tonistiigi/binfmt --install all
+    git clone https://github.com/am11/CrossRepoCITesting
+    cd CrossRepoCITesting/linux-arm-aot
+    docker build . -t armv7-nativeaot-webapi
+    # create a temporary instance and copy the artifacts locally
+    docker cp $(docker create --name webapi1 armv7-nativeaot-webapi):/dist/webapi1 .
+    docker rm webapi1
+    docker run -e 'ASPNETCORE_URLS=http://*:8080' --rm -v$(pwd):/app --platform linux/arm/v7 \
+      -p 8080:8080 ubuntu /app/webapi1 &
+    sleep 5
+    # test
+    curl -v http://localhost:8080/todos | jq
+
+#  - sh: git clone https://github.com/am11/CrossRepoCITesting; cd CrossRepoCITesting/dir1; docker build --progress=plain -t dir1-testing .
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 #  -  sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
   - sh: |
