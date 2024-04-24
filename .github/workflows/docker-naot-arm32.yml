@@ -1,0 +1,22 @@
+name: NativeAOT arm32 with .NET 9
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Build and test
+        run: |
+          docker run --privileged --rm tonistiigi/binfmt --install all
+          git clone https://github.com/am11/CrossRepoCITesting
+          cd CrossRepoCITesting/linux-arm-aot
+          docker build . -t armv7-nativeaot-webapi
+          # create a temporary instance and copy the artifacts locally
+          docker cp $(docker create --name webapi1 armv7-nativeaot-webapi):/dist/webapi1 .
+          docker rm webapi1
+          docker run -e 'ASPNETCORE_URLS=http://*:8080' --rm -v$(pwd):/app --platform linux/arm/v7 \
+            -p 8080:8080 ubuntu /app/webapi1 &
+          # test
+          curl -s http://localhost:8080/todos | jq
