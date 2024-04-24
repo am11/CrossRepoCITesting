@@ -22,7 +22,7 @@ jobs:
           echo 'RUN cat /tmp/test1/debootstrap/debootstrap.log' >> Dockerfile
           docker build --progress=plain -t minbase-testing .
           sudo sh -c 'apt update && apt install -y debootstrap'
-          debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/ || true
+          sudo debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/ || true
           cat /tmp/test1/debootstrap/debootstrap.log
           gcm docker
           wsl --update --web-download
