@@ -18,5 +18,6 @@ jobs:
           docker rm webapi1
           docker run -e 'ASPNETCORE_URLS=http://*:8080' --rm -v$(pwd):/app --platform linux/arm/v7 \
             -p 8080:8080 ubuntu /app/webapi1 &
+          sleep 5
           # test
-          curl -s http://localhost:8080/todos | jq
+          curl -v http://localhost:8080/todos | jq
