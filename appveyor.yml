@@ -7,7 +7,7 @@ init:
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
       cd CrossRepoCITesting/linux-arm-aot
-      docker build . -t armv7-nativeaot-webapi
+      docker build . -t armv7-nativeaot-webapi --progress=plain
       # create a temporary instance and copy the artifacts locally
       docker cp $(docker create --name webapi1 armv7-nativeaot-webapi):/dist/webapi1 .
       docker rm webapi1
