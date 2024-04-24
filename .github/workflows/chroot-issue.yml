@@ -19,6 +19,7 @@ jobs:
           echo "FROM --platform=linux/amd64 ubuntu:latest" > Dockerfile
           echo "RUN apt update && apt install -y debootstrap" >> Dockerfile
           echo "RUN debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/"
+          docker build --progress=plain -t minbase-testing .
           gcm docker
           wsl --update --web-download
           Invoke-WebRequest https://github.com/am11/VoidWSL/releases/download/24032100/void-x86_64-musl.zip -Out void-x86_64-musl.zip
