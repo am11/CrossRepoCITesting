@@ -6,7 +6,7 @@ init:
   - sh: |
       echo $CI
       export CI=1
-      echo $C!
+      echo $CI
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
       cd CrossRepoCITesting/linux-arm-aot
