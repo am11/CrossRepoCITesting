@@ -23,7 +23,7 @@ jobs:
           docker build --progress=plain -t minbase-testing .
           sudo sh -c 'apt update && apt install -y debootstrap libext2fs2 qemu-user-static'
           sudo debootstrap "--variant=minbase" --arch armhf jammy /tmp/test1 http://ports.ubuntu.com/ || true
-          cat /tmp/test1/debootstrap/debootstrap.log
+          #cat /tmp/test1/debootstrap/debootstrap.log
           gcm docker
           wsl --update --web-download
           Invoke-WebRequest https://github.com/am11/VoidWSL/releases/download/24032100/void-x86_64-musl.zip -Out void-x86_64-musl.zip
