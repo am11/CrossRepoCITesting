@@ -13,6 +13,7 @@ jobs:
     steps:
       - name: Test debootstrap
         run: |
+          git clone https://github.com/am11/CrossRepoCITesting; cd CrossRepoCITesting/dir1; docker build --progress=plain -t dir1-testing .
           mkdir test1
           cd test1
           echo "FROM --platform=linux/amd64 ubuntu:latest" > Dockerfile
