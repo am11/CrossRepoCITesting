@@ -4,10 +4,14 @@ image: Ubuntu2004
 
 init:
   - sh: |
+      echo $CI
+      export CI=1
+      echo $C!
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
       cd CrossRepoCITesting/linux-arm-aot
-      docker build . -t armv7-nativeaot-webapi --progress=plain
+      docker build . -t armv7-nativeaot-webapi
+      sudo apt install -y jq
       # create a temporary instance and copy the artifacts locally
       docker cp $(docker create --name webapi1 armv7-nativeaot-webapi):/dist/webapi1 .
       docker rm webapi1
