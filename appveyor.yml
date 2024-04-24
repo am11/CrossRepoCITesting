@@ -1,11 +1,11 @@
 #image: Visual Studio 2022
-image: macos
-#image: Ubuntu2004
+#image: macos
+image: Ubuntu2004
 
 init:
-#  - sh: git clone https://github.com/am11/CrossRepoCITesting; cd CrossRepoCITesting/dir1; docker build . -t dir1-testing
+  - sh: git clone https://github.com/am11/CrossRepoCITesting; cd CrossRepoCITesting/dir1; docker build . -t dir1-testing
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-  -  sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+#  -  sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
   - sh: |
       git clone https://github.com/am11/runtime --single-branch --depth 1 -b feature/tests/published-crossgen2
       cd runtime
