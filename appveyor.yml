@@ -7,6 +7,7 @@ build_script:
       unset TERM
       echo $TERM
       echo "^^"
+      export
       exit 1
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
