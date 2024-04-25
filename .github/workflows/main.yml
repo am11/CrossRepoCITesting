@@ -15,18 +15,21 @@ jobs:
     steps:
     - name: Test runtime build
       run: |
-        git clone https://github.com/dotnet/dotnet vmr --single-branch --depth 1 --branch v8.0.3
-        docker run --rm -w /vmr -v$(pwd)/vmr:/vmr amd64/oraclelinux:9 sh -c \
-          'dnf install --setopt tsflags=nodocs --refresh -y  automake clang cmake curl findutils git krb5-devel libicu-devel lldb-devel llvm lttng-ust openssl-devel python3 tar zlib-devel;
-           dnf --enablerepo=ol9_codeready_builder install lttng-ust-devel;
-           ./prep.sh;
-           ./build.sh --clean-while-building -- -p:TargetRid=ol.9.1-x64'
-        git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
-        cd repo
-        ls ../vmr/artifacts/x64/Release/
-        artifacts="-a ../vmr/artifacts/x64/Release/dotnet-sdk-*.tar.gz"
-        tag_name="dotnet-ol.9.3-$GITHUB_RUN_ID"
-        sudo apt install -y hub
-        hub release create $artifacts -m "$tag_name" "$tag_name"
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        docker run --rm -v$(pwd):/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
+          /runtime/build.sh libs.native -c Release -os illumos -cross -gcc
+#        git clone https://github.com/dotnet/dotnet vmr --single-branch --depth 1 --branch v8.0.3
+#        docker run --rm -w /vmr -v$(pwd)/vmr:/vmr amd64/oraclelinux:9 sh -c \
+#          'dnf install --setopt tsflags=nodocs --refresh -y  automake clang cmake curl findutils git krb5-devel libicu-devel lldb-devel llvm lttng-ust openssl-devel python3 tar zlib-devel;
+#           dnf --enablerepo=ol9_codeready_builder install lttng-ust-devel;
+#           ./prep.sh;
+#           ./build.sh --clean-while-building -- -p:TargetRid=ol.9.1-x64'
+#        git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
+#        cd repo
+#        ls ../vmr/artifacts/x64/Release/
+#        artifacts="-a ../vmr/artifacts/x64/Release/dotnet-sdk-*.tar.gz"
+#        tag_name="dotnet-ol.9.3-$GITHUB_RUN_ID"
+#        sudo apt install -y hub
+#        hub release create $artifacts -m "$tag_name" "$tag_name"
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
