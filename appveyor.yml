@@ -8,6 +8,11 @@ build_script:
       echo $TERM
       echo "^^"
       export
+      if [ -t 1 ] ; then
+          echo "stdout is a terminal"
+      else
+          echo "stdout isn't a terminal"
+      fi
       exit 1
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
