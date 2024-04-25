@@ -2,9 +2,13 @@
 #image: macos
 image: Ubuntu2004
 
+environment:
+  TERM: dumb
+
 build_script:
   - sh: |
-      unset TERM
+      echo $TERM
+      exit 1
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
       cd CrossRepoCITesting/linux-arm-aot
