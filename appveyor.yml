@@ -2,18 +2,15 @@
 #image: macos
 image: Ubuntu2004
 
+environment:
+  BUILDKIT_PROGRESS: plain
+
 build_script:
   - sh: |
-      unset TERM
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
       cd CrossRepoCITesting/linux-arm-aot
-      sh -c '      if [ -t 1 ] ; then
-          echo "stdout is a terminal";
-      else
-          echo "stdout isnt a terminal";
-      fi;
-      docker build . -t armv7-nativeaot-webapi' | tee
+      docker build . -t armv7-nativeaot-webapi
       sudo apt install -y jq
       # create a temporary instance and copy the artifacts locally
       docker cp $(docker create --name webapi1 armv7-nativeaot-webapi):/dist/webapi1 .
