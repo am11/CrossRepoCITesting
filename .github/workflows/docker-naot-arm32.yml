@@ -9,6 +9,7 @@ jobs:
     steps:
       - name: Build and test
         run: |
+          export
           docker run --privileged --rm tonistiigi/binfmt --install all
           git clone https://github.com/am11/CrossRepoCITesting
           cd CrossRepoCITesting/linux-arm-aot
