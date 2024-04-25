@@ -15,7 +15,7 @@ jobs:
     steps:
     - name: Test runtime build
       run: |
-        git clone https://github.com/dotnet/dotnet vmr --single-branch --depth 1
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
           /runtime/build.sh libs.native -c Release -os illumos -cross -gcc
