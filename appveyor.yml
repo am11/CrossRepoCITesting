@@ -11,7 +11,7 @@ build_script:
           echo "stdout is a terminal";
       else
           echo "stdout isnt a terminal";
-      fi;exit 1;
+      fi;
       docker build . -t armv7-nativeaot-webapi' | tee
       sudo apt install -y jq
       # create a temporary instance and copy the artifacts locally
