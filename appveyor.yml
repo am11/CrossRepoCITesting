@@ -10,13 +10,15 @@ build_script:
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
       cd CrossRepoCITesting/linux-arm-aot
-      docker build . -t armv7-nativeaot-webapi --progress=plain
+      docker build . -t armv7-nativeaot-webapi
       sudo apt install -y jq
       # create a temporary instance and copy the artifacts locally
       docker cp $(docker create --name webapi1 armv7-nativeaot-webapi):/dist/webapi1 .
       docker rm webapi1
+      # start webapi1 app in arm/v7 container with background (trailing &)
       docker run -e 'ASPNETCORE_URLS=http://*:8080' --rm -v$(pwd):/app --platform linux/arm/v7 \
         -p 8080:8080 ubuntu /app/webapi1 &
+      # sleep a while to let the webapi1 startup
       sleep 15
       # test
       curl -v http://localhost:8080/todos | jq
