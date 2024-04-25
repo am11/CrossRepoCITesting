@@ -2,15 +2,15 @@
 #image: macos
 image: Ubuntu2004
 
-#environment:
-#  BUILDKIT_PROGRESS: plain
+environment:
+  BUILDKIT_PROGRESS: plain
 
 build_script:
   - sh: |
       docker run --privileged --rm tonistiigi/binfmt --install all
       git clone https://github.com/am11/CrossRepoCITesting
       cd CrossRepoCITesting/linux-arm-aot
-      docker build . -t armv7-nativeaot-webapi 2>&1 | tee
+      docker build . -t armv7-nativeaot-webapi
       sudo apt install -y jq
       # create a temporary instance and copy the artifacts locally
       docker cp $(docker create --name webapi1 armv7-nativeaot-webapi):/dist/webapi1 .
