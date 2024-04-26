@@ -1,0 +1,15 @@
+name: build runtime with gcc
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: test runtime build
+        run: |
+          git clone https://github.com/am11/runtime --single-branch --depth 1 -b feature/build/gcc-14
+          docker run -w /runtime -v$(pwd)/runtime:/runtime ubuntu sh -c "\
+            eng/install-native-dependencies.sh; sed -i 's/Suites: bookworm bookworm-updates/Suites: bookworm bookworm-updates testing/' /etc/apt/sources.list.d/debian.sources; apt update;apt install -y gcc-14 g++-14; \
+            ./build.sh -c Release -gcc14"
