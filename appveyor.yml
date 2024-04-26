@@ -23,10 +23,10 @@ build_script:
       # test
       curl -v http://localhost:8080/todos | jq
 
-#init:
+init:
 #  - sh: git clone https://github.com/am11/CrossRepoCITesting; cd CrossRepoCITesting/dir1; docker build --progress=plain -t dir1-testing .
 #  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-#  -  sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
+  -  sh: curl -sflL 'https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-ssh.sh' | bash -e -
 #  - sh: |
 #      git clone https://github.com/am11/runtime --single-branch --depth 1 -b feature/tests/published-crossgen2
 #      cd runtime
