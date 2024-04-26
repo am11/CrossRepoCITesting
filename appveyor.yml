@@ -3,7 +3,7 @@
 image: Ubuntu2004
 
 environment:
-  NO_COLOR: 1
+  BUILDKIT_PROGRESS: plain
 
 build_script:
   - sh: |
