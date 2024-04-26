@@ -1,6 +1,6 @@
 #image: Visual Studio 2022
 #image: macos
-image: Ubuntu2004
+image: Ubuntu2204
 
 environment:
   BUILDKIT_PROGRESS: plain
