@@ -11,6 +11,6 @@ jobs:
     - name: Test runtime build
       run: |
         git clone https://github.com/am11/runtime --single-branch --depth 1 --branch feature/build/linux-x86-clang18-2
-        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-x64-net9.0 \
-          /runtime/build.sh -arch x64 -os linux -cross -s clr.runtime+clr.jit+clr.iltools+clr.spmi+clr.corelib -c Release
+        cd runtime
+        eng/install-native-dependencies.sh
+        ./build.sh -c Release
