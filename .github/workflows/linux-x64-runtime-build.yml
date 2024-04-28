@@ -1,0 +1,16 @@
+name: linux-x64 dotnet-runtime build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Test runtime build
+      run: |
+        git clone https://github.com/am11/runtime --single-branch --depth 1 --branch feature/build/linux-x64-clang18
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-x64-net9.0 \
+          /runtime/build.sh -arch x64 -os linux -cross -s clr.runtime+clr.jit+clr.iltools+clr.spmi+clr.corelib -c Release
