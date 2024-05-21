@@ -1,0 +1,16 @@
+name: linux-risv64 dotnet-runtime build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Test runtime build
+      run: |
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-riscv64 \
+          /runtime/build.sh -arch riscv64 -os linux -cross -s clr -c Release
