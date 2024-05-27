@@ -1,13 +1,19 @@
-macos_instance:
-  image: ghcr.io/cirruslabs/macos-monterey-base:latest
+#macos_instance:
+#  image: ghcr.io/cirruslabs/macos-monterey-base:latest
 
-mac_task:
-  script: |
-    brew install --cask --no-quarantine docker
-    brew install orbstack
-    orb
-    docker run hello-world
+#mac_task:
+#  script: |
+#    brew install --cask --no-quarantine docker
+#    brew install orbstack
+#    orb
+#    docker run hello-world
 
-ubuntu22_spicy_task:
-  container:
-    dockerfile: dir1/Dockerfile
+#ubuntu22_spicy_task:
+#  container:
+#    dockerfile: dir1/Dockerfile
+
+freebsd_instance:
+  image_family: freebsd-14-0
+
+task:
+  install_script: pkg search dotnet
