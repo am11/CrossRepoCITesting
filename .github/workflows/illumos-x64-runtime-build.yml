@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Test runtime build
       run: |
-        git clone https://github.com/am11/runtime --single-branch --depth 1 --branch feature/std=c++11+no-ms-extensions
+        git clone https://github.com/am11/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
           /runtime/build.sh -c Release -os illumos -cross -gcc
