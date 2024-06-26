@@ -8,6 +8,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Remove unnecessary files
+      run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: Test runtime build
       run: |
         git clone https://github.com/am11/runtime --single-branch --depth 1
