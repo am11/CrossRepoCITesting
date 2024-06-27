@@ -4,7 +4,20 @@ on:
   workflow_dispatch:
 
 jobs:
-  coreclr:
+  coreclr_Debug:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Remove unnecessary files
+      run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
+    - name: runtime+libs+packs build
+      run: |
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
+          /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc
+
+  coreclr_Release:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,7 +30,20 @@ jobs:
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
           /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc
 
-  mono:
+  mono_Debug:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Remove unnecessary files
+      run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
+    - name: runtime+libs+packs build
+      run: |
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
+          /runtime/build.sh mono+libs+packs -c Debug -os illumos -cross -gcc
+
+  mono_Release:
     runs-on: ubuntu-latest
 
     steps:
