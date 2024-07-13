@@ -14,7 +14,7 @@ jobs:
       run: |
         git clone https://github.com/dotnet/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos-20240711153006-4d80ecb \
           /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc
 
   coreclr_Release:
@@ -27,7 +27,7 @@ jobs:
       run: |
         git clone https://github.com/dotnet/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos-20240711153006-4d80ecb \
           /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc
 
   mono_Debug:
@@ -40,7 +40,7 @@ jobs:
       run: |
         git clone https://github.com/am11/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos-20240711153006-4d80ecb \
           /runtime/build.sh mono+libs+packs -c Debug -os illumos -cross -gcc
 
   mono_Release:
@@ -53,5 +53,5 @@ jobs:
       run: |
         git clone https://github.com/am11/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-18.04-cross-illumos-20220531132048-f13d79e \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos-20240711153006-4d80ecb \
           /runtime/build.sh mono+libs+packs -c Release -os illumos -cross -gcc
