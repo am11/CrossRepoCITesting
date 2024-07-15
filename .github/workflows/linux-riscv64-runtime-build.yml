@@ -13,8 +13,10 @@ jobs:
         git clone https://github.com/am11/runtime -b feature/cleanups/targetingpacks --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-riscv64-alpine-net9.0 \
-          sh -c '/runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset host.native+clr.native+clr.corelib+clr.tools+clr.nativecorelib+clr.packages+clr.nativeaotlibs+clr.crossarchtools+libs /p:EnableSourceLink=false &&
-          /runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset libs.tests --testscope all /p:EnableSourceLink=false /p:UseLocalAppHostPack=true &&
-          /runtime/src/tests/build.sh -Release -cross -riscv64 -clang -priority1'
+          /runtime/build.sh --cross --arch riscv64'
+
+#          sh -c '/runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset host.native+clr.native+clr.corelib+clr.tools+clr.nativecorelib+clr.packages+clr.nativeaotlibs+clr.crossarchtools+libs /p:EnableSourceLink=false &&
+#          /runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset libs.tests --testscope all /p:EnableSourceLink=false /p:UseLocalAppHostPack=true &&
+#          /runtime/src/tests/build.sh -Release -cross -riscv64 -clang -priority1'
 
 #          /runtime/build.sh -arch riscv64 -os linux -cross -s clr -c Release \
