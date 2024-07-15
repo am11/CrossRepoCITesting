@@ -15,7 +15,7 @@ jobs:
         git clone https://github.com/am11/runtime -b feature/freebsd-port/outputrid --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64-freebsd-14 \
-          sh -c '/runtime/build.sh clr.native+host.native -c Debug -os freebsd -cross && /runtime/build.sh clr+libs+packs -c Debug -os freebsd -cross && cd /runtime &&
+          sh -c '/runtime/build.sh host.native -c Debug -os freebsd -cross && /runtime/build.sh clr+libs+packs -c Debug -os freebsd -cross && cd /runtime &&
           tdnf install -y file &&
           find artifacts/bin -name ilc -exec file {} \;
           find artifacts/bin -name crossgen2 -exec file {} \;'
