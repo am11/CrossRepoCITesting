@@ -12,7 +12,7 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        git clone https://github.com/am11/runtime -b feature/freebsd-port/outputrid --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64-freebsd-14 \
           sh -c '/runtime/build.sh clr+libs+packs -c Debug -os freebsd -cross && cd /runtime &&
