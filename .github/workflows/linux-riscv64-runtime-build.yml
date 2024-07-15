@@ -8,7 +8,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Test runtime build
+    - name: Remove unnecessary files
+      run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
+    - name: runtime+libs+packs build
       run: |
         git clone https://github.com/am11/runtime -b feature/cleanups/targetingpacks --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
