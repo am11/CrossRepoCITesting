@@ -16,7 +16,7 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64-freebsd-14 \
           sh -c '/runtime/build.sh clr+libs+packs -c Debug -os freebsd -cross && cd /runtime &&
-          apt update && apt-get install -y file &&
+          tdnf install -y file &&
           find artifacts/bin -name ilc -exec file {} \;
           find artifacts/bin -name crossgen2 -exec file {} \;'
 
