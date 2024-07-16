@@ -20,6 +20,6 @@ jobs:
           find artifacts/bin -name ilc -exec file {} \;
           find artifacts/bin -name crossgen2 -exec file {} \;
           mkdir s && cd s && unzip ../artifacts/packages/Debug/Shipping/runtime.freebsd-x64.Microsoft.DotNet.ILCompiler.9.0.0-dev.nupkg;
-          find artifacts/bin -name ilc -exec file {} \;'
+          find . -name ilc -exec file {} \;'
 
 #          ./dotnet.sh build -v:diag -c Debug -p:TargetOS=freebsd -p:CrossBuild=true src/coreclr/tools/aot/ILCompiler/ILCompiler.csproj'
