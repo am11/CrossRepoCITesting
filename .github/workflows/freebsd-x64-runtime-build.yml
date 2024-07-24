@@ -24,6 +24,8 @@ jobs:
 
     - name: Upload artifacts
       run: |
+        sudo apt install -y hub
+
         # hub(1) requires release to be created inside a git repo
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
