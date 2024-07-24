@@ -34,8 +34,7 @@ jobs:
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.9.0.0-ci.symbols.nupkg"
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/runtime.freebsd-x64.Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
+        tag_name="freebsd_$GITHUB_RUN_ID"
+        hub release create $artifacts -m "$tag_name" "$tag_name"
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-        tag_name="jit-diffs_$GITHUB_RUN_ID"
-        hub release create $artifacts -m "$tag_name" "$tag_name"
