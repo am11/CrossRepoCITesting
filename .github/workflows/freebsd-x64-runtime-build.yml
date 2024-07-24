@@ -28,11 +28,10 @@ jobs:
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
 
-        tar czf jit-diffs.tar.gz -C /tmp jit-diffs
-        artifacts=" -a artifacts/packages/Debug/Shipping/dotnet-runtime-9.0.0-ci-freebsd-x64.tar.gz"
-        artifacts+=" -a artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.9.0.0-ci.symbols.nupkg"
-        artifacts+=" -a artifacts/packages/Debug/Shipping/Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
-        artifacts+=" -a artifacts/packages/Debug/Shipping/runtime.freebsd-x64.Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
+        artifacts=" -a ../artifacts/packages/Debug/Shipping/dotnet-runtime-9.0.0-ci-freebsd-x64.tar.gz"
+        artifacts+=" -a ../artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.9.0.0-ci.symbols.nupkg"
+        artifacts+=" -a ../artifacts/packages/Debug/Shipping/Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
+        artifacts+=" -a ../artifacts/packages/Debug/Shipping/runtime.freebsd-x64.Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
 
         tag_name="jit-diffs_$GITHUB_RUN_ID"
         hub release create $artifacts -m "$tag_name" "$tag_name"
