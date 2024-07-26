@@ -31,6 +31,7 @@ jobs:
         cd repo
 
         artifacts=" -a ../runtime/artifacts/packages/Debug/Shipping/dotnet-runtime-9.0.0-ci-freebsd-x64.tar.gz"
+        artifacts=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.9.0.0-ci.nupkg"
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.9.0.0-ci.symbols.nupkg"
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/runtime.freebsd-x64.Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
