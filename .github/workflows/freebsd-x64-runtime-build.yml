@@ -37,6 +37,7 @@ jobs:
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/runtime.freebsd-x64.Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Host.freebsd-x64.9.0.0-ci.nupkg"
         artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Ref.9.0.0-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/bin/coreclr/freebsd.x64.Checked/corehost/singlefilehost.dbg"
 
         tag_name="freebsd_$GITHUB_RUN_ID"
         hub release create $artifacts -m "$tag_name" "$tag_name"
