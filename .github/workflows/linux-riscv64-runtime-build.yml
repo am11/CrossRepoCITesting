@@ -12,9 +12,29 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/am11/runtime -b feature/cleanups/targetingpacks --single-branch --depth 1
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-riscv64-alpine-net9.0 \
           sh -c '/runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset host.native+clr.native+clr.corelib+clr.tools+clr.nativecorelib+clr.packages+clr.nativeaotlibs+clr.crossarchtools+libs /p:EnableSourceLink=false &&
           /runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset libs.tests --testscope all /p:EnableSourceLink=false /p:UseLocalAppHostPack=true &&
           /runtime/src/tests/build.sh -Release -cross -riscv64 -clang -priority1'
+
+    - name: Upload artifacts
+      run: |
+        sudo apt install -y hub
+
+        # hub(1) requires release to be created inside a git repo
+        git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
+        cd repo
+
+        du -sh ../runtime/artifacts
+        rm -rf ../runtime/artifacts/obj
+        du -sh ../runtime/artifacts
+
+        tar czf artifacts.tar.gz ../runtime/artifacts
+        artifacts=" -a artifacts.tar.gz"
+
+        tag_name="linux-riscv64_$GITHUB_RUN_ID"
+        hub release create $artifacts -m "$tag_name" "$tag_name"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
