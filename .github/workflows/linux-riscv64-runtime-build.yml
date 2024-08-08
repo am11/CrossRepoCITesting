@@ -18,7 +18,8 @@ jobs:
           sh -c '/runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset host.native+clr.native+clr.corelib+clr.tools+clr.nativecorelib+clr.packages+clr.nativeaotlibs+clr.crossarchtools+libs /p:EnableSourceLink=false &&
           /runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset libs.tests --testscope all /p:EnableSourceLink=false /p:UseLocalAppHostPack=true &&
           rm -rf /runtime/artifacts/obj &&
-          /runtime/src/tests/build.sh -Release -cross -riscv64 -clang -priority1 -p:UseLocalAppHostPack=true'
+          /runtime/src/tests/build.sh -Release -cross -riscv64 -clang -priority1 -p:UseLocalAppHostPack=true &&
+          rm -rf ../runtime/artifacts/obj'
 
     - name: Upload artifacts
       run: |
@@ -27,10 +28,6 @@ jobs:
         # hub(1) requires release to be created inside a git repo
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
-
-        du -sh ../runtime/artifacts
-        rm -rf ../runtime/artifacts/obj
-        du -sh ../runtime/artifacts
 
         tar czf artifacts.tar.gz ../runtime/artifacts
         artifacts=" -a artifacts.tar.gz"
