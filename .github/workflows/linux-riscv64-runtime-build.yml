@@ -30,6 +30,8 @@ jobs:
         cd repo
 
         tar czf artifacts.tar.gz ../runtime/artifacts
+        du -sh artifacts.tar.gz
+        du -b artifacts.tar.gz
 
         # Split the tar.gz file into 1.5 GB chunks
         split -b 1536M artifacts.tar.gz artifacts_part_
