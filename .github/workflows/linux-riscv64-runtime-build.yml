@@ -30,7 +30,18 @@ jobs:
         cd repo
 
         tar czf artifacts.tar.gz ../runtime/artifacts
-        artifacts=" -a artifacts.tar.gz"
+
+        # Split the tar.gz file into 1.5 GB chunks
+        split -b 1536M artifacts.tar.gz artifacts_part_
+        
+        # Initialize the artifacts variable
+        artifacts=""
+        
+        # Loop over the split files and append each one to the artifacts variable
+        for chunk in artifacts_part_*
+        do
+            artifacts+=" -a ${chunk}"
+        done
 
         tag_name="linux-riscv64_$GITHUB_RUN_ID"
         hub release create $artifacts -m "$tag_name" "$tag_name"
