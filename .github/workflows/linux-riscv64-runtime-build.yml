@@ -28,7 +28,7 @@ jobs:
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
 
-        tar czf testNativeBinDir.tar.gz ../runtime/artifacts/obj/linux-riscv64.Release/tests
+        tar czf testNativeBinDir.tar.gz ../runtime/artifacts/obj/linux.riscv64.Release/Native
         sudo rm -rf ../runtime/artifacts/obj
 
         tar czf artifacts.tar.gz ../runtime/artifacts
