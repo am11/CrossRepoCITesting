@@ -29,6 +29,9 @@ jobs:
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
 
+        tar czf testNativeBinDir.tar.gz ../runtime/artifacts/obj/linux.riscv64.Release/tests
+        sudo rm -rf ../runtime/artifacts/obj
+
         tar czf artifacts.tar.gz ../runtime/artifacts
         du -sh artifacts.tar.gz
         du -b artifacts.tar.gz
@@ -37,7 +40,7 @@ jobs:
         split -b 1536M artifacts.tar.gz artifacts_part_
         
         # Initialize the artifacts variable
-        artifacts=""
+        artifacts=" -a testNativeBinDir.tar.gz"
         
         # Loop over the split files and append each one to the artifacts variable
         for chunk in artifacts_part_*
