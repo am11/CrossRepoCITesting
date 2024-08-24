@@ -12,7 +12,7 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/am11/runtime --single-branch --depth 1 -b feature/tests/published-crossgen2
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-riscv64-net9.0 \
           sh -c '/runtime/build.sh --cross --clang --arch riscv64 --configuration Release --subset host.native+clr.native+clr.corelib+clr.tools+clr.nativecorelib+clr.packages+clr.nativeaotlibs+clr.crossarchtools+libs /p:EnableSourceLink=false &&
