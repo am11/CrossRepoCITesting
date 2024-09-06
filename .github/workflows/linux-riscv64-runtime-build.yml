@@ -12,7 +12,7 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        git clone https://github.com/am11/runtime --single-branch --depth 1 -b patch-11
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-riscv64-net9.0 \
           sh -c '/runtime/build.sh -cross -arch riscv64 -c Checked -s clr+libs &&
