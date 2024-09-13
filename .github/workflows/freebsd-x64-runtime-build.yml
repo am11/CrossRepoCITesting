@@ -32,13 +32,13 @@ jobs:
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
 
-        artifacts=" -a ../runtime/artifacts/packages/Debug/Shipping/dotnet-runtime-9.0.0-ci-freebsd-x64.tar.gz"
-        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.9.0.0-ci.nupkg"
-        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.9.0.0-ci.symbols.nupkg"
-        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
-        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/runtime.freebsd-x64.Microsoft.DotNet.ILCompiler.9.0.0-ci.nupkg"
-        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Host.freebsd-x64.9.0.0-ci.nupkg"
-        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Ref.9.0.0-ci.nupkg"
+        artifacts=" -a ../runtime/artifacts/packages/Debug/Shipping/dotnet-runtime-*-ci-freebsd-x64.tar.gz"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.freebsd-x64.*-ci.symbols.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.DotNet.ILCompiler.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/runtime.freebsd-x64.Microsoft.DotNet.ILCompiler.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Host.freebsd-x64.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Ref.*-ci.nupkg"
 
         tag_name="freebsd_$GITHUB_RUN_ID"
         hub release create $artifacts -m "$tag_name" "$tag_name"
