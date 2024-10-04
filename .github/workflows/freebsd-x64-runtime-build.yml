@@ -14,7 +14,8 @@ jobs:
       run: |
         git clone https://github.com/am11/runtime -b feature/freebsd-port/outputrid
         cd runtime
-        git config user.email ci@example.com
+        git config --global user.email ci@example.com
+        git config --global user.name ci
         git merge --no-ff 681643c3cb63dc1a516d289b3c47e4f31f59a2c4
         docker run --rm -v$(pwd):/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64-freebsd-14 \
