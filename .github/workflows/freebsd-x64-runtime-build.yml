@@ -16,7 +16,7 @@ jobs:
         cd runtime
         git config --global user.email ci@example.com
         git config --global user.name ci
-        git merge --no-ff 7dec4525c62c303bac88326447b5639913f3da98
+        git merge --no-ff 3227d4ada44f608b47f2e38a39f0fc9646102045
         docker run --rm -v$(pwd):/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64-freebsd-14 \
           sh -c '
