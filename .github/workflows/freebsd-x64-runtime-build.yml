@@ -21,7 +21,7 @@ jobs:
         docker run --rm -v$(pwd):/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:cbl-mariner-2.0-cross-amd64-freebsd-14 \
           sh -c '
-          /runtime/build.sh -ci -arch x64 -os freebsd -cross -s clr+libs+host+packs -c Debug -rc Checked -p:NativeAotSupported=false -p:StageOneBuild=true --keepnativesymbols true &&
+          /runtime/build.sh -ci -arch x64 -os freebsd -cross -s clr+libs+host+packs -c Debug -rc Checked -p:NativeAotSupported=false -p:StageOneBuild=true -p:_RequiresLiveILLink=false --keepnativesymbols true &&
           /runtime/build.sh -ci -arch x64 -os freebsd -cross -s clr.tools+packs -c Debug -rc Checked --keepnativesymbols true'
 #          sh -c '/runtime/build.sh clr+libs+packs -c Debug -os freebsd -cross &&
 #            tdnf install -y file unzip && cd /tmp &&
