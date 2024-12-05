@@ -11,8 +11,15 @@ jobs:
     - name: Test runtime build
       run: |
         cd c:\temp
-        git clone https://github.com/am11/runtime --single-branch --depth 1 --branch feature/fcalls-cleanups-3
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1 --branch feature/fcalls-cleanups-3
         cd runtime
         ./build.cmd -arch x86 -cross -s clr+libs
-        ./dotnet.cmd build /t:Test /p:TargetArchitecture=x86 src/libraries/System.Runtime/tests/System.Runtime.Tests
-        type C:\temp\DivUInt64Internal.log
+        try {
+          ./dotnet.cmd build -t:Test src/libraries/System.Runtime/tests/System.Runtime.Tests -p:xunitoptions="-method System.Tests.UInt64Tests_GenericMath.op_CheckedDivisionTest"
+        } finally {
+          if (Test-Path C:\temp\DivUInt64Internal.log) {
+            Get-Content C:\temp\DivUInt64Internal.log
+          } else {
+            Write-Host "Log file not found."
+          }
+        }
