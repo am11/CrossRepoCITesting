@@ -15,3 +15,4 @@ jobs:
         cd runtime
         ./build.cmd -arch x86 -cross -s clr+libs
         ./dotnet.cmd build /t:Test /p:TargetArchitecture=x86 src/libraries/System.Runtime/tests/System.Runtime.Tests
+        type C:\temp\DivUInt64Internal.log
