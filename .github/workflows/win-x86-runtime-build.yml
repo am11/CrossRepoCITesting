@@ -1,0 +1,16 @@
+name: linux-x86 dotnet-runtime build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Test runtime build
+      run: |
+        git clone https://github.com/am11/runtime --single-branch --depth 1 --branch feature/fcalls-cleanups-3
+        cd runtime
+        build.cmd -arch x86 -cross -s clrlibs
+        dotnet.cmd build -t:Test src/libraries/System.Runtime/tests/System.Runtime.Tests
