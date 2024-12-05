@@ -1,4 +1,4 @@
-name: linux-x86 dotnet-runtime build
+name: win-x86 dotnet-runtime build
 
 on:
   workflow_dispatch:
