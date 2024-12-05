@@ -16,10 +16,8 @@ jobs:
         ./build.cmd -arch x86 -cross -s clr+libs
         try {
           ./dotnet.cmd build -t:Test src/libraries/System.Runtime/tests/System.Runtime.Tests -p:xunitoptions="-method System.Tests.UInt64Tests_GenericMath.op_CheckedDivisionTest"
-        } finally {
-          if (Test-Path C:\temp\DivUInt64Internal.log) {
-            Get-Content C:\temp\DivUInt64Internal.log
-          } else {
-            Write-Host "Log file not found."
-          }
+        } catch {
+          Get-Content C:\temp\DivUInt64Internal.log
+          throw $_
         }
+
