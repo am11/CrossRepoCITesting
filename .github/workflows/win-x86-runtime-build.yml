@@ -11,7 +11,7 @@ jobs:
     - name: Test runtime build
       run: |
         cd c:\temp
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1 --branch feature/fcalls-cleanups-3
+        git clone https://github.com/am11/runtime --single-branch --depth 1 --branch feature/fcalls-cleanups-3
         cd runtime
         ./build.cmd -arch x86 -cross -s clr+libs
         try {
@@ -20,4 +20,3 @@ jobs:
           Get-Content C:\temp\DivUInt64Internal.log
           throw $_
         }
-
