@@ -14,4 +14,4 @@ jobs:
         git clone https://github.com/am11/runtime --single-branch --depth 1 --branch feature/fcalls-cleanups-3
         cd runtime
         ./build.cmd -arch x86 -cross -s clr+libs
-        ./dotnet.cmd build -t:Test src/libraries/System.Runtime/tests/System.Runtime.Tests
+        ./dotnet.cmd build /t:Test /p:TargetArchitecture=x86 src/libraries/System.Runtime/tests/System.Runtime.Tests
