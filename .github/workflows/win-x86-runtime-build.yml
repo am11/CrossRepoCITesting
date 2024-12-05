@@ -15,7 +15,7 @@ jobs:
         cd runtime
         ./build.cmd -arch x86 -cross -s clr+libs
         try {
-          ./dotnet.cmd build -t:Test src/libraries/System.Runtime/tests/System.Runtime.Tests -p:xunitoptions="-method System.Tests.UInt64Tests_GenericMath.op_CheckedDivisionTest"
+          ./dotnet.cmd build /t:Test /p:TargetArchitecture=x86 /p:xunitoptions="-method System.Tests.UInt64Tests_GenericMath.op_CheckedDivisionTest" src/libraries/System.Runtime/tests/System.Runtime.Tests
         } catch {
           Get-Content C:\temp\DivUInt64Internal.log
           throw $_
