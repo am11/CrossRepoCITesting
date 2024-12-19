@@ -12,7 +12,7 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/am11/runtime -b feature/freebsd-port/outputrid-4
+        git clone https://github.com/am11/runtime -b feature/freebsd-port/outputrid
         cd runtime
         git config --global user.email ci@example.com
         git config --global user.name ci
