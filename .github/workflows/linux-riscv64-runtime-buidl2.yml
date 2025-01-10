@@ -1,4 +1,4 @@
-name: linux-riscv64 dotnet-runtime build
+name: linux-riscv64 dotnet-runtime build2
 
 on:
   workflow_dispatch:
