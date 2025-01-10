@@ -1,0 +1,52 @@
+name: linux-riscv64 dotnet-runtime build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Remove unnecessary files
+      run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
+    - name: runtime+libs+packs build
+      run: |
+        git clone https://github.com/am11/runtime -b feature/freebsd-port/outputrid
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-riscv64-net9.0 \
+          sh -c '
+          /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked -p:StageOneBuild=true --keepnativesymbols true &&
+          /runtime/build.sh -ci -arch riscv64 -cross -s tools+clr.tools+packs -c Debug -rc Checked --keepnativesymbols true  -p:StageTwoBuild=true &&
+            tdnf install -y file unzip && cd /tmp &&
+            find /runtime/artifacts/bin -name "libcdacreader*" -exec file {} \;
+          '
+
+    - name: Upload artifacts
+      run: |
+        sudo apt install -y hub
+
+        # hub(1) requires release to be created inside a git repo
+        git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
+        cd repo
+
+        tar czf artifacts.tar.gz ../runtime/artifacts
+        du -sh artifacts.tar.gz
+        du -b artifacts.tar.gz
+
+        # Split the tar.gz file into 1.5 GB chunks
+        split -b 1536M artifacts.tar.gz artifacts_part_
+        
+        # Initialize the artifacts variable
+        artifacts=""
+        
+        # Loop over the split files and append each one to the artifacts variable
+        for chunk in artifacts_part_*
+        do
+            artifacts+=" -a ${chunk}"
+        done
+
+        tag_name="linux-riscv64_$GITHUB_RUN_ID"
+        hub release create $artifacts -m "$tag_name" "$tag_name"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
