@@ -14,7 +14,7 @@ jobs:
       run: |
         git clone https://github.com/am11/runtime -b feature/freebsd-port/outputrid
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-riscv64-net9.0 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-riscv64-net10.0 \
           sh -c '
           /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked -p:StageOneBuild=true --keepnativesymbols true &&
           rm -rf /runtime/artifacts/obj &&
