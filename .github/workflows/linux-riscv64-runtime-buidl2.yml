@@ -17,9 +17,11 @@ jobs:
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-cross-riscv64-net9.0 \
           sh -c '
           /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked -p:StageOneBuild=true --keepnativesymbols true &&
+          rm -rf /runtime/artifacts/obj &&
           /runtime/build.sh -ci -arch riscv64 -cross -s tools+clr.tools+packs -c Debug -rc Checked --keepnativesymbols true  -p:StageTwoBuild=true &&
             tdnf install -y file unzip && cd /tmp &&
             find /runtime/artifacts/bin -name "libcdacreader*" -exec file {} \;
+            rm -rf /runtime/artifacts/obj
           '
 
     - name: Upload artifacts
