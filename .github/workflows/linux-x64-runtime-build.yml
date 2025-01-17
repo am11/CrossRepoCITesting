@@ -10,7 +10,7 @@ jobs:
     steps:
     - name: Test runtime build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        git clone https://github.com/jkoritzinsky/runtime --single-branch --depth 1 -b import-ordering
         cd runtime
         sudo eng/common/native/install-dependencies.sh
         ./build.sh -c Release
