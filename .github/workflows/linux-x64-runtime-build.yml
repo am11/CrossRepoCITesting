@@ -12,7 +12,7 @@ jobs:
       run: |
         git clone https://github.com/dotnet/runtime --single-branch --depth 1
         cd runtime
-        sudo eng/install-native-dependencies.sh
+        sudo eng/common/native/install-dependencies.sh
         ./build.sh -c Release
 
     - name: Upload artifacts
