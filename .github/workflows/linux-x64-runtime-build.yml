@@ -10,7 +10,28 @@ jobs:
     steps:
     - name: Test runtime build
       run: |
-        git clone https://github.com/am11/runtime --single-branch --depth 1 --branch feature/build/linux-x86-clang18-2
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
         cd runtime
         sudo eng/install-native-dependencies.sh
         ./build.sh -c Release
+
+    - name: Upload artifacts
+      run: |
+        sudo apt install -y hub
+
+        # hub(1) requires release to be created inside a git repo
+        git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
+        cd repo
+
+        artifacts=" -a ../runtime/artifacts/packages/Debug/Shipping/dotnet-runtime-*.tar.gz"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.*-ci.symbols.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.DotNet.ILCompiler.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/runtime.*.Microsoft.DotNet.ILCompiler.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Host.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Ref.*-ci.nupkg"
+
+        tag_name="linux_x64_$GITHUB_RUN_ID"
+        hub release create $artifacts -m "$tag_name" "$tag_name"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
