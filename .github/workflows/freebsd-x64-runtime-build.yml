@@ -12,7 +12,7 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        git clone https://github.com/jkoritzinsky/runtime --single-branch --depth 1 -b import-ordering
         cd runtime
         git config --global user.email ci@example.com
         git config --global user.name ci
