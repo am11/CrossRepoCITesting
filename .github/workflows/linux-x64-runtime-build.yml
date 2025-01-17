@@ -23,8 +23,10 @@ jobs:
         git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
         cd repo
 
-        artifacts=" -a ../runtime/artifacts/packages/**/*.tar.gz"
-        artifacts+=" -a ../runtime/artifacts/packages/**/*.nupkg"
+        artifacts=""
+        for file in $(find ../runtime/artifacts/packages \( -name "*.tar.gz" -o -name "*.nupkg" \)); do
+            artifacts+=" -a $file"
+        done
 
         tag_name="linux_x64_$GITHUB_RUN_ID"
         hub release create $artifacts -m "$tag_name" "$tag_name"
