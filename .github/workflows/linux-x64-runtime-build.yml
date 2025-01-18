@@ -10,10 +10,22 @@ jobs:
     steps:
     - name: Test runtime build
       run: |
-        git clone https://github.com/jkoritzinsky/runtime --single-branch --depth 1 -b import-ordering
-        cd runtime
-        sudo eng/common/native/install-dependencies.sh
-        ./build.sh -c Release
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-amd64 \
+          sh -c '
+          /runtime/build.sh -ci -arch x64 -cross -s clr+libs+host -c Debug -rc Checked -p:StageOneBuild=true --keepnativesymbols true &&
+          rm -rf /runtime/artifacts/obj &&
+          /runtime/build.sh -ci -arch x64 -cross -s tools+clr.tools+packs -c Debug -rc Checked --keepnativesymbols true  -p:StageTwoBuild=true &&
+            tdnf install -y file unzip && cd /tmp &&
+            find /runtime/artifacts/bin -name "libcdacreader*" -exec file {} \;
+            rm -rf /runtime/artifacts/obj
+          '
+
+    #    git clone https://github.com/jkoritzinsky/runtime --single-branch --depth 1 -b import-ordering
+    #    cd runtime
+    #    sudo eng/common/native/install-dependencies.sh
+    #    ./build.sh -c Release
 
     - name: Upload artifacts
       run: |
