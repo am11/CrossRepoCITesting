@@ -1,0 +1,17 @@
+name: testing-musl-cross
+
+on:
+  workflow_dispatch:
+
+jobs:
+  coreclr_Debug:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: jirutka/setup-alpine@v1
+      with:
+        branch: v3.21
+        arch: loongarch64
+
+    - run: cat /etc/alpine-release
+      shell: alpine.sh {0}
