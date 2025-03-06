@@ -33,7 +33,6 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64 \
           sh -c '
-          curl -sSL https://github.com/dotnet/runtime/pull/113179.patch | git -C /runtime apply - &&
           echo "Building for target..." &&
           /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked --keepnativesymbols true -p:StageOneBuild=true &&
           /runtime/build.sh -ci -arch riscv64 -cross -s tools+clr.tools+tools.illink -c Debug -rc Checked --keepnativesymbols true -p:StageTwoBuild=true &&
