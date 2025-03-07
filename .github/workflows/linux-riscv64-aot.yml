@@ -30,18 +30,13 @@ jobs:
     - name: runtime, libs and nativeaot smoke tests build
       run: |
         git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        curl -sSL https://github.com/dotnet/runtime/pull/113243.patch | git -C runtime apply -
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64@sha256:d64f90c040c32f36ba4e90be5a276afb6adbd2daa92528906fed90140ea17137 \
           sh -c '
           echo "Building for target..." &&
           /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked --keepnativesymbols true -p:StageOneBuild=true &&
           /runtime/build.sh -ci -arch riscv64 -cross -s tools+clr.tools+tools.illink -c Debug -rc Checked --keepnativesymbols true -p:StageTwoBuild=true &&
-          echo "Building for host..." &&
-          tdnf install -y cmake llvm lld lldb clang python curl libicu-devel openssl-devel krb5-devel lttng-ust-devel pigz cpio &&
-          /runtime/build.sh -ci -arch x64 -s clr+libs -c Debug -rc Checked --keepnativesymbols true &&
-          echo "Building smoke tests..." &&
-          cp /runtime/artifacts/bin/coreclr/linux.riscv64.Checked/x64/libclrjit_unix_riscv64_x64.so /runtime/artifacts/bin/coreclr/linux.x64.Checked/ilc-published &&
-          cp /runtime/artifacts/bin/coreclr/linux.x64.Checked/ilc-published/ilc /runtime/artifacts/bin/coreclr/linux.riscv64.Checked/x64/ilc/ilc &&
           SysRoot=$ROOTFS_DIR LinkerFlavor=lld /runtime/src/tests/build.sh -ci -riscv64 -cross -nativeaot -tree:nativeaot -Checked -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -keepnativesymbols -p:UseLocalAppHostPack=true -p:UseNativeAotForComponents=true -p:TestNativeAot=true
           '
 
