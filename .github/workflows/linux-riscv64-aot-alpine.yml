@@ -1,0 +1,76 @@
+name: linux-riscv64 dotnet-runtime aot alpine
+
+on:
+  workflow_dispatch:
+    inputs:
+      runtimeForkName:
+        description: fork
+        required: true
+        default: dotnet
+      runtimeBranchName:
+        description: branch
+        required: true
+        default: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Make space for runtime build # we only need docker on the host
+      run: |
+        df -h
+        sudo rm -rf \
+          "$AGENT_TOOLSDIRECTORY" \
+          /opt/google/chrome \
+          /opt/microsoft/msedge \
+          /opt/microsoft/powershell \
+          /opt/pipx \
+          /usr/lib/mono \
+          /usr/local/julia* \
+          /usr/local/lib/android \
+          /usr/local/lib/node_modules \
+          /usr/local/share/chromium \
+          /usr/local/share/powershell \
+          /usr/share/dotnet \
+          /usr/share/swift
+        df -h
+
+    - name: runtime, libs and nativeaot smoke tests build
+      run: |
+        git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64-musl \
+          sh -c '
+          /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked --keepnativesymbols true -p:StageOneBuild=true &&
+          /runtime/build.sh -ci -arch riscv64 -cross -s tools+clr.tools+tools.illink -c Debug -rc Checked --keepnativesymbols true -p:StageTwoBuild=true &&
+          SysRoot=$ROOTFS_DIR LinkerFlavor=lld /runtime/src/tests/build.sh -ci -riscv64 -cross -nativeaot -tree:nativeaot -Checked -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -keepnativesymbols -p:UseLocalAppHostPack=true -p:UseNativeAotForComponents=true -p:TestNativeAot=true
+          '
+
+    - name: run tests in qemu
+      run: |
+        docker run --privileged --rm tonistiigi/binfmt --install all
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
+          -e CORE_ROOT=/runtime/artifacts/tests/coreclr/linux.riscv64.Checked/Tests/Core_Root \
+          --platform linux/riscv64 alpine \
+          sh -c '
+          apk add file llvm bash icu-libs libatomic &&
+          mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-riscv64/native &&
+          ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-riscv64/native;
+
+          fail=0;
+          find /runtime/artifacts/tests/coreclr/linux.riscv64.Checked/nativeaot/SmokeTests -path "*/native/*" -type f -exec file {} \; |
+              grep ELF.*executable | while IFS=: read -r test _; do
+            echo "Running $test...";
+            test_dir=$(dirname "$test")/..
+            cd "$test_dir" || exit
+            "$test"
+            exitcode=$?
+            if [ "$exitcode" -ne 100 ]; then
+              echo "$test failed with exit code $exitcode"
+              fail=1
+            fi
+          done
+
+          if [ "$fail" -eq 1 ]; then exit 1; fi
+          '
