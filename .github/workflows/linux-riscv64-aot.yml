@@ -62,8 +62,7 @@ jobs:
           find /runtime/artifacts/tests/coreclr/linux.riscv64.Checked/nativeaot/SmokeTests -path "*/native/*" -type f -exec file {} \; |
               grep ELF.*executable | while IFS=: read -r test _; do
             echo "Running $test...";
-            test_dir=$(dirname "$test")/..
-            cd "$test_dir" || exit
+            cd "$(dirname "$test")/.."
             "$test"
             exitcode=$?
             if [ "$exitcode" -ne 100 ]; then
