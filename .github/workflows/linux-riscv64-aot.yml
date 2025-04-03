@@ -2,6 +2,15 @@ name: linux-riscv64 dotnet-runtime aot
 
 on:
   workflow_dispatch:
+    inputs:
+      runtimeForkName:
+        description: fork
+        required: true
+        default: dotnet
+      runtimeBranchName:
+        description: branch
+        required: true
+        default: main
 
 jobs:
   build:
@@ -29,12 +38,10 @@ jobs:
 
     - name: runtime, libs and nativeaot smoke tests build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1
-        curl -sSL https://github.com/dotnet/runtime/pull/113243.patch | git -C runtime apply -
+        git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64@sha256:d64f90c040c32f36ba4e90be5a276afb6adbd2daa92528906fed90140ea17137 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64 \
           sh -c '
-          echo "Building for target..." &&
           /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked --keepnativesymbols true -p:StageOneBuild=true &&
           /runtime/build.sh -ci -arch riscv64 -cross -s tools+clr.tools+tools.illink -c Debug -rc Checked --keepnativesymbols true -p:StageTwoBuild=true &&
           SysRoot=$ROOTFS_DIR LinkerFlavor=lld /runtime/src/tests/build.sh -ci -riscv64 -cross -nativeaot -tree:nativeaot -Checked -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -keepnativesymbols -p:UseLocalAppHostPack=true -p:UseNativeAotForComponents=true -p:TestNativeAot=true
@@ -46,23 +53,24 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           -e CORE_ROOT=/runtime/artifacts/tests/coreclr/linux.riscv64.Checked/Tests/Core_Root \
           --platform linux/riscv64 ubuntu \
-          bash -c '
+          sh -c '
           apt update && apt install -y file llvm &&
           mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-riscv64/native &&
           ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-riscv64/native;
 
           fail=0;
-          while IFS=: read -r test _; do
+          find /runtime/artifacts/tests/coreclr/linux.riscv64.Checked/nativeaot/SmokeTests -path "*/native/*" -type f -exec file {} \; |
+              grep ELF.*executable | while IFS=: read -r test _; do
             echo "Running $test...";
-            pushd "$(dirname $test)/..";
-            "$test";
-            exitcode=$?;
-            popd;
+            test_dir=$(dirname "$test")/..
+            cd "$test_dir" || exit
+            "$test"
+            exitcode=$?
             if [ "$exitcode" -ne 100 ]; then
-              echo "$test failed with exit code $exitcode";
-              fail=1;
-            fi;
-          done < <(find /runtime/artifacts/tests/coreclr/linux.riscv64.Checked/nativeaot/SmokeTests -path "*/native/*" -type f -exec file {} \; | grep ELF.*executable);
+              echo "$test failed with exit code $exitcode"
+              fail=1
+            fi
+          done
 
           if [ "$fail" -eq 1 ]; then exit 1; fi
           '
