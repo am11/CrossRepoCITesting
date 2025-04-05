@@ -42,8 +42,7 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64-musl \
           sh -c '
-          /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked --keepnativesymbols true -p:StageOneBuild=true &&
-          /runtime/build.sh -ci -arch riscv64 -cross -s tools+clr.tools+tools.illink -c Debug -rc Checked --keepnativesymbols true -p:StageTwoBuild=true &&
+          /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked --keepnativesymbols true --bootstrap &&
           SysRoot=$ROOTFS_DIR LinkerFlavor=lld /runtime/src/tests/build.sh -ci -riscv64 -cross -nativeaot -tree:nativeaot -Checked -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -keepnativesymbols -p:UseLocalAppHostPack=true -p:UseNativeAotForComponents=true -p:TestNativeAot=true
           '
 
