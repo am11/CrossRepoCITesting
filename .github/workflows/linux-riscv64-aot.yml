@@ -30,7 +30,7 @@ jobs:
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         echo "git HEAD is at: $(git -C runtime rev-parse HEAD)"
-        curl -sSL https://github.com/dotnet/runtime/pull/114285.diff | git apply -
+        curl -sSL https://github.com/dotnet/runtime/pull/114285.diff | git -C runtime apply -
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64 \
           sh -c '
