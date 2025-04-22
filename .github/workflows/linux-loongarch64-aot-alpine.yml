@@ -44,7 +44,7 @@ jobs:
         docker run --privileged --rm tonistiigi/binfmt --install all
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/loongarch64 \
           -e CORE_ROOT=/runtime/artifacts/tests/coreclr/linux.loongarch64.Checked/Tests/Core_Root \
-          --platform linux/loong64 loongarch64/alpine \
+          --platform linux/loong64 loongarch64/alpine:3.19 \
           sh -c '
           apk add file llvm icu-libs libatomic &&
           mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-loongarch64/native &&
