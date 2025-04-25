@@ -41,5 +41,6 @@ jobs:
         sync: nfs
         run: |
           pkg install -y llvm
-          sudo mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/freebsd-x64/native
-          sudo ln -s /usr/local/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/freebsd-x64/native
+          ls /home/runner/work/CrossRepoCITesting/CrossRepoCITesting/runtime
+          mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/freebsd-x64/native
+          ln -s /usr/local/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/freebsd-x64/native
