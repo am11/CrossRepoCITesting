@@ -29,6 +29,19 @@ jobs:
     - name: runtime, libs and nativeaot smoke tests build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        echo "git HEAD is at: $(git -C runtime rev-parse HEAD)"
+        # TODO: remove once PR #114285 is merged
+        curl -sSL https://github.com/dotnet/runtime/pull/114285.diff | git -C runtime apply -
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-freebsd-14-amd64 \
+          sh -c '
+          /runtime/build.sh -ci -arch x64 -os freebsd -cross -s clr+libs+host+packs -c Debug -rc Checked --keepnativesymbols true --bootstrap &&
+          SysRoot=$ROOTFS_DIR LinkerFlavor=lld /runtime/src/tests/build.sh -ci -x64 -os freebsd -cross -nativeaot -tree:nativeaot -Checked -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -keepnativesymbols -p:UseLocalAppHostPack=true -p:UseNativeAotForComponents=true -p:TestNativeAot=true
+          '
+
+    - name: Reset permissions on runtime/artifacts
+      run: |
+        sudo chown -R $(whoami):$(whoami) runtime/artifacts
 
     - name: run tests in qemu
       uses: vmactions/freebsd-vm@v1
@@ -38,9 +51,23 @@ jobs:
         arch: x86_64
         envs: 'CORE_ROOT'
         usesh: true
-        sync: nfs
+        sync: sshfs
         run: |
-          pkg install -y llvm
-          ls /home/runner/work/CrossRepoCITesting/CrossRepoCITesting/runtime
+          pkg install -y llvm icu
           mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/freebsd-x64/native
           ln -s /usr/local/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/freebsd-x64/native
+          fail=0
+          testsDir=/home/runner/work/CrossRepoCITesting/CrossRepoCITesting/runtime/artifacts/tests/coreclr/freebsd.x64.Checked/nativeaot/SmokeTests
+          find "$testsDir" -path "*/native/*" -type f -exec file {} \; |
+              grep ELF.*executable | while IFS=: read -r test _; do
+            echo "Running $test..."
+            cd "$(dirname "$test")/.."
+            exitcode=0
+            "$test" || exitcode=$?
+            if [ "$exitcode" -ne 100 ]; then
+              echo "$test failed with exit code $exitcode"
+              fail=1
+            fi
+          done
+
+          if [ "$fail" -eq 1 ]; then exit 1; fi
