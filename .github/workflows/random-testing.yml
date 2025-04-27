@@ -9,4 +9,6 @@ jobs:
     steps:
       - name: test
         run: |
+          sudo apt update
+          sudo   apt install   -y  zstd  libvirt-daemon-system   virt-manager qemu-kvm qemu-system-arm qemu-efi-riscv64 libosinfo-bin  axel expect screen sshpass
           ls /usr/share
