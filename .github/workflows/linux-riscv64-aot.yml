@@ -33,7 +33,7 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64 \
           sh -c '
-          /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host+packs -c Debug -rc Checked --keepnativesymbols true --bootstrap &&
+          /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols true --bootstrap &&
           SysRoot=$ROOTFS_DIR LinkerFlavor=lld /runtime/src/tests/build.sh -ci -riscv64 -cross -nativeaot -tree:nativeaot -Checked -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -keepnativesymbols -p:UseLocalAppHostPack=true -p:UseNativeAotForComponents=true -p:TestNativeAot=true
           '
 
