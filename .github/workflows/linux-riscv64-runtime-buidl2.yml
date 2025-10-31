@@ -14,7 +14,7 @@ jobs:
       run: |
         git clone https://github.com/dotnet/runtime --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net10.0-cross-riscv64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-riscv64 \
           sh -c '
           /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host -c Debug -rc Checked -p:StageOneBuild=true --keepnativesymbols true &&
           rm -rf /runtime/artifacts/obj &&
