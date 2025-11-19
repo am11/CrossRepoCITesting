@@ -1,4 +1,4 @@
-name: linux-riscv64 dotnet-runtime aot alpine
+name: linux-musl-riscv64 dotnet-runtime aot
 
 on:
   workflow_dispatch:

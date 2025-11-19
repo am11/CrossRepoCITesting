@@ -1,4 +1,4 @@
-name: linux-loongarch64 dotnet-runtime aot alpine
+name: linux-musl-loongarch64 dotnet-runtime aot
 
 on:
   workflow_dispatch:
