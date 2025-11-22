@@ -40,7 +40,7 @@ jobs:
     - name: run tests in qemu
       run: |
         docker run --privileged --rm tonistiigi/binfmt --install all
-        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 -e DOTNET_RuntimeAsync=1 \
           -e CORE_ROOT=/runtime/artifacts/tests/coreclr/linux.riscv64.Checked/Tests/Core_Root \
           --platform linux/riscv64 ubuntu \
           sh -c '
