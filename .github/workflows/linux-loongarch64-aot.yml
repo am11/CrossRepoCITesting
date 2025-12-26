@@ -44,7 +44,7 @@ jobs:
           -e CORE_ROOT=/runtime/artifacts/tests/coreclr/linux.loongarch64.Checked/Tests/Core_Root \
           --platform linux/loong64 loongarch64/debian \
           sh -c '
-          apt update && apt install -y file llvm libatomic1 &&
+          apt update && apt install -y file llvm libicu-dev libatomic1 &&
           mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-loongarch64/native &&
           ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-loongarch64/native;
 
