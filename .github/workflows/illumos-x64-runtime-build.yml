@@ -28,7 +28,7 @@ jobs:
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update && apt install -y ninja-build;
-          /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc --bootstrap
+          /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc --bootstrap'
 
   coreclr_Release:
     runs-on: ubuntu-latest
