@@ -8,7 +8,7 @@ on:
         required: true
         default: dotnet
       runtimeRepohName:
-        description: branch
+        description: repo
         required: true
         default: runtime
       runtimeBranchName:
