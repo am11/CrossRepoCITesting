@@ -56,16 +56,16 @@ jobs:
           ln -s /usr/local/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/freebsd-x64/native
           fail=0
           testsDir=/home/runner/work/CrossRepoCITesting/CrossRepoCITesting/runtime/artifacts/tests/coreclr/freebsd.x64.Checked/nativeaot/SmokeTests
-          find "$testsDir" -path "*/native/*" -type f -exec file {} \; |
-              grep ELF.*executable | while IFS=: read -r test _; do
+          find "$testsDir" -path "*/native/*" -type f -exec file {} \; | grep ELF.*executable > test_list.txt
+
+          while IFS=: read -r test _; do
             echo "Running $test..."
-            cd "$(dirname "$test")/.."
-            exitcode=0
-            "$test" || exitcode=$?
+            (cd "$(dirname "$test")/.." && "$test")
+            exitcode=$?
             if [ "$exitcode" -ne 100 ]; then
               echo "$test failed with exit code $exitcode"
               fail=1
             fi
-          done
+          done < test_list.txt
 
           if [ "$fail" -eq 1 ]; then exit 1; fi
