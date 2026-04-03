@@ -49,17 +49,17 @@ jobs:
           ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-riscv64/native;
 
           fail=0;
-          find /runtime/artifacts/tests/coreclr/linux.riscv64.Checked/nativeaot/SmokeTests -path "*/native/*" -type f -exec file {} \; |
-              grep ELF.*executable | while IFS=: read -r test _; do
+          find /runtime/artifacts/tests/coreclr/linux.riscv64.Checked/nativeaot/SmokeTests -path "*/native/*" -type f -exec file {} \; | grep ELF.*executable > test_list.txt
+
+          while IFS=: read -r test _; do
             echo "Running $test...";
-            cd "$(dirname "$test")/.."
-            "$test"
+            (cd "$(dirname "$test")/.." && "$test")
             exitcode=$?
             if [ "$exitcode" -ne 100 ]; then
               echo "$test failed with exit code $exitcode"
               fail=1
             fi
-          done
+          done < test_list.txt
 
           if [ "$fail" -eq 1 ]; then exit 1; fi
           '
