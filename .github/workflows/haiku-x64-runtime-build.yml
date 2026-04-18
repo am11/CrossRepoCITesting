@@ -12,7 +12,7 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1 -b v11.0.0-preview.3.26207.106
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1 -b v11.0.0-preview.2.26159.112
         cd runtime
         docker run --rm -v$(pwd):/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-haiku-latest \
