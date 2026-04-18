@@ -26,7 +26,7 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+        docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
           /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc --bootstrap'
@@ -40,7 +40,7 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+        docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
           /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap'
@@ -54,7 +54,7 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+        docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
           /runtime/build.sh mono+libs+packs -c Debug -os illumos -cross -gcc'
@@ -68,7 +68,7 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+        docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
           /runtime/build.sh mono+libs+packs -c Release -os illumos -cross -gcc'
