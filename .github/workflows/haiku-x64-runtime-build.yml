@@ -1,0 +1,51 @@
+name: haiku-x64 dotnet-runtime build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  coreclr_Debug:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Remove unnecessary files
+      run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
+    - name: runtime+libs+packs build
+      run: |
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1
+        cd runtime
+        docker run --rm -v$(pwd):/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-haiku-latest \
+          sh -c '
+          /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Debug -rc Checked -p:StageOneBuild=true --keepnativesymbols true &&
+          /runtime/build.sh -ci -arch x64 -os haiku -cross -s tools+clr.tools+packs -c Debug -rc Checked --keepnativesymbols true  -p:StageTwoBuild=true &&
+            apt install -y file unzip && cd /tmp &&
+            find /runtime/artifacts/bin -name "libcdacreader*" -exec file {} \;
+          '
+#          sh -c '/runtime/build.sh clr+libs+packs -c Debug -os haiku -cross &&
+#            tdnf install -y file unzip && cd /tmp &&
+#            unzip /runtime/artifacts/packages/Debug/Shipping/runtime.haiku-x64.Microsoft.DotNet.ILCompiler.9.0.0-dev.nupkg &&
+#            find . -name ilc -exec file {} \;'
+#          ./dotnet.sh build -v:diag -c Debug -p:TargetOS=haiku -p:CrossBuild=true src/coreclr/tools/aot/ILCompiler/ILCompiler.csproj'
+
+    - name: Upload artifacts
+      run: |
+        sudo apt install -y hub
+
+        # hub(1) requires release to be created inside a git repo
+        git clone https://${{ secrets.CLONE_TOKEN }}:x-oauth-basic@github.com/${{ github.repository }}.git repo
+        cd repo
+
+        artifacts=" -a ../runtime/artifacts/packages/Debug/Shipping/dotnet-runtime-*-ci-haiku-x64.tar.gz"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.haiku-x64.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Runtime.haiku-x64.*-ci.symbols.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.DotNet.ILCompiler.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/runtime.haiku-x64.Microsoft.DotNet.ILCompiler.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Host.haiku-x64.*-ci.nupkg"
+        artifacts+=" -a ../runtime/artifacts/packages/Debug/Shipping/Microsoft.NETCore.App.Ref.*-ci.nupkg"
+
+        tag_name="haiku_$GITHUB_RUN_ID"
+        hub release create $artifacts -m "$tag_name" "$tag_name"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        artifacts+=" -a ../runtime/artifacts/bin/coreclr/haiku.x64.Checked/corehost/singlefilehost.dbg"
