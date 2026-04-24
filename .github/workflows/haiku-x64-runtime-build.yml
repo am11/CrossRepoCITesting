@@ -12,10 +12,10 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1 -b v11.0.0-preview.2.26159.112
+        git clone https://github.com/dotnet/runtime --single-branch --depth 1 -b darc-main-a5b5bc7e-08f0-4475-8658-430753b356f4
         cd runtime
         docker run --rm -v$(pwd):/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-haiku-latest \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-haiku-amd64 \
           sh -c '
             apt update --allow-insecure-repositories && apt install -y ninja-build --allow-unauthenticated &&
             /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Debug -rc Checked --bootstrap &&
