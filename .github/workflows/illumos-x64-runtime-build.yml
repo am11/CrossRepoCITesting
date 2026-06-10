@@ -26,11 +26,11 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-        export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__has_attribute) \&\& __has_attribute(retain)\n#define RETAIN __attribute__((used, retain))\n#else\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
+        export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__clang__) \|\| (defined(__GNUC__) \&\& __GNUC__ >= 11)\n#define RETAIN __attribute__((used, retain))\n#else\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
-          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap --restore;
+          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --restore;
           find ~/.nuget -name Version.targets | xargs wc -l;
           find ~/.nuget -name Version.targets -print0 | xargs -0 sed -i "$SED_SCRIPT";
           find ~/.nuget -name Version.targets | xargs wc -l;
@@ -45,11 +45,11 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-        export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__has_attribute) \&\& __has_attribute(retain)\n#define RETAIN __attribute__((used, retain))\n#else\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
+        export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__clang__) \|\| (defined(__GNUC__) \&\& __GNUC__ >= 11)\n#define RETAIN __attribute__((used, retain))\n#else\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
-          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap --restore;
+          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --restore;
           find ~/.nuget -name Version.targets | xargs wc -l;
           find ~/.nuget -name Version.targets -print0 | xargs -0 sed -i "$SED_SCRIPT";
           find ~/.nuget -name Version.targets | xargs wc -l;
@@ -64,11 +64,11 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-        export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__has_attribute) \&\& __has_attribute(retain)\n#define RETAIN __attribute__((used, retain))\n#else\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
+        export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__clang__) \|\| (defined(__GNUC__) \&\& __GNUC__ >= 11)\n#define RETAIN __attribute__((used, retain))\n#else\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
-          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap --restore;
+          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --restore;
           find ~/.nuget -name Version.targets | xargs wc -l;
           find ~/.nuget -name Version.targets -print0 | xargs -0 sed -i "$SED_SCRIPT";
           find ~/.nuget -name Version.targets | xargs wc -l;
@@ -83,11 +83,11 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-        export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__has_attribute) \&\& __has_attribute(retain)\n#define RETAIN __attribute__((used, retain))\n#else\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
+        export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__clang__) \|\| (defined(__GNUC__) \&\& __GNUC__ >= 11)\n#define RETAIN __attribute__((used, retain))\n#else\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
-          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap --restore;
+          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --restore;
           find ~/.nuget -name Version.targets | xargs wc -l;
           find ~/.nuget -name Version.targets -print0 | xargs -0 sed -i "$SED_SCRIPT";
           find ~/.nuget -name Version.targets | xargs wc -l;
