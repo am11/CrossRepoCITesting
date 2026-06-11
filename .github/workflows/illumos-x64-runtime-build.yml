@@ -30,11 +30,7 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
-          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --restore;
-          find ~/.nuget -name Version.targets | xargs wc -l;
-          find ~/.nuget -name Version.targets -print0 | xargs -0 sed -i "$SED_SCRIPT";
-          find ~/.nuget -name Version.targets | xargs wc -l;
-          /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc --bootstrap --build'
+          /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc --bootstrap'
 
   coreclr_Release:
     runs-on: ubuntu-latest
@@ -49,11 +45,7 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
-          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --restore;
-          find ~/.nuget -name Version.targets | xargs wc -l;
-          find ~/.nuget -name Version.targets -print0 | xargs -0 sed -i "$SED_SCRIPT";
-          find ~/.nuget -name Version.targets | xargs wc -l;
-          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap --build'
+          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap'
 
   mono_Debug:
     runs-on: ubuntu-latest
