@@ -26,6 +26,7 @@ jobs:
     - name: runtime+libs+packs build
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        git -C runtime rev-parse HEAD
         export SED_SCRIPT='s|static char sccsid\[\] __attribute__((used,retain)) = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|#if defined(__GNUC__) \&\& !defined(__clang__) \&\& defined(TARGET_SUNOS)\n#define RETAIN __attribute__((used))\n__asm__(".pushsection .init_array; .reloc ., R_X86_64_NONE, sccsid; .popsection");\n#else\n#define RETAIN __attribute__((used, retain))\n#endif\n\nstatic char sccsid[] RETAIN = "@(#)Version $(FileVersion)$(_SourceBuildInfo)";|g'
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
