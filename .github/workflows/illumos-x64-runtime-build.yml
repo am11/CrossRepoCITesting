@@ -31,6 +31,7 @@ jobs:
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
           /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc --bootstrap'
+        strings runtime/artifacts/bin/coreclr/illumos.x64.Debug/./libcoreclr.so | grep '@(#)Version'
 
   coreclr_Release:
     runs-on: ubuntu-latest
@@ -46,6 +47,7 @@ jobs:
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
           /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap'
+        strings runtime/artifacts/bin/coreclr/illumos.x64.Release/./libcoreclr.so | grep '@(#)Version'
 
   mono_Debug:
     runs-on: ubuntu-latest
