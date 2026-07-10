@@ -27,14 +27,14 @@ jobs:
           Write-Host "Connecting to Pinggy network..."
           Start-Sleep -Seconds 8
           
-          # 4. Read the text file out loud onto the GitHub action logs
+          # 4. Continuously read the log file so new output shows up live
+          Write-Host "Tunnel loop started. Monitoring log for RDP address..."
           $logPath = "$env:TEMP\pinggy.log"
-          if (Test-Path $logPath) {
-              Get-Content $logPath
-          } else {
-              Write-Host "Log file not found yet. Retrying..."
-          }
           
-          # 5. Keep streaming or block the runner so it doesn't shut down
-          Write-Host "Tunnel is live. Continuous keeping runner alive loop started..."
-          while ($true) { Start-Sleep -Seconds 60 }
+          while ($true) {
+              if (Test-Path $logPath) {
+                  # -Tail 10 reads only new or recent lines to prevent log spamming
+                  Get-Content $logPath -Tail 10 | Select-Object -Unique
+              }
+              Start-Sleep -Seconds 5
+          }
