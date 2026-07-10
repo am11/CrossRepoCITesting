@@ -5,7 +5,7 @@ on: [workflow_dispatch]
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 360 # Note: GitHub Actions automatically caps jobs at a max of 360 minutes (6 hours)
+    timeout-minutes: 360 # GitHub Action runners cap out at 6 hours max
 
     steps:
       - name: Native RDP with Pinggy
@@ -17,18 +17,22 @@ jobs:
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           
-          # 2. Build the non-interactive SSH tunnel command
-          # -T disables pseudo-terminal allocation to fix the CI runner crash
-          # -N tells it to only forward ports and not execute a remote command shell
-          $sshCmd = "ssh -p 443 -T -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=10 -R 0:127.0.0.1:3389 tcp@free.pinggy.io"
+          # 2. Open the firewall for the local RDP port
+          Enable-NetFirewallRule -Name RemoteDesktop-UserMode-In-TCP
           
-          # 3. Execute the tunnel inside a standard background job
-          $job = Start-Job -ScriptBlock { iex $using:sshCmd }
+          # 3. Launch SSH directly using PowerShell's background process runner.
+          # -T bypasses the TTY terminal allocation error.
+          # We remove -N so Pinggy is allowed to print out the URL string before it starts forwarding.
+          Write-Host "Connecting to Pinggy... Please wait for your public address table..."
           
-          # 4. Wait for the connection to establish and fetch the output logs
-          Write-Host "Waiting for Pinggy to generate your RDP address..."
-          Start-Sleep -Seconds 7
-          Receive-Job -Job $job
+          $Expression = 'ssh -p 443 -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=10 -R 0:127.0.0.1:3389 tcp@free.pinggy.io'
           
-          # 5. Loop infinitely to keep the GitHub runner from closing while you debug
+          # This command handles background threading on Windows cleanly without swallowing exit states
+          $powershellCmd = "powershell -Command `"$Expression`""
+          $process = [System.Diagnostics.Process]::Start("cmd.exe", "/c $powershellCmd")
+          
+          # 4. Wait for the tunnel connection to initialize and display on screen
+          Start-Sleep -Seconds 10
+          
+          # 5. Keep the runner awake infinitely while you use the active tunnel
           while ($true) { Start-Sleep -Seconds 60 }
