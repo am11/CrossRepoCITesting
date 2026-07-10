@@ -1,0 +1,12 @@
+name: Debug Windows Runner
+on: workflow_dispatch # Allows you to manually trigger it from the UI
+
+jobs:
+  debug-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup tmate SSH Session
+        uses: mxschmitt/action-tmate@v3
