@@ -5,7 +5,7 @@ on: [workflow_dispatch]
 jobs:
   build:
     runs-on: windows-latest
-    timeout-minutes: 360 # GitHub Action runners cap out at 6 hours max
+    timeout-minutes: 360
 
     steps:
       - name: Native RDP with Pinggy
@@ -16,23 +16,25 @@ jobs:
           net user runneradmin "$env:RDP_PASS"
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
-          
-          # 2. Open the firewall for the local RDP port
           Enable-NetFirewallRule -Name RemoteDesktop-UserMode-In-TCP
           
-          # 3. Launch SSH directly using PowerShell's background process runner.
-          # -T bypasses the TTY terminal allocation error.
-          # We remove -N so Pinggy is allowed to print out the URL string before it starts forwarding.
-          Write-Host "Connecting to Pinggy... Please wait for your public address table..."
+          # 2. Fire up SSH in a completely separate Windows process block
+          # We send all output lines directly to a temporary log file on the runner drive
+          $sshArgs = "/c ssh -p 443 -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=10 -R 0:127.0.0.1:3389 tcp@free.pinggy.io > %TEMP%\pinggy.log 2>&1"
+          [System.Diagnostics.Process]::Start("cmd.exe", $sshArgs) | Out-Null
           
-          $Expression = 'ssh -p 443 -T -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=10 -R 0:127.0.0.1:3389 tcp@free.pinggy.io'
+          # 3. Wait a few seconds for the network tunnel connection handshake
+          Write-Host "Connecting to Pinggy network..."
+          Start-Sleep -Seconds 8
           
-          # This command handles background threading on Windows cleanly without swallowing exit states
-          $powershellCmd = "powershell -Command `"$Expression`""
-          $process = [System.Diagnostics.Process]::Start("cmd.exe", "/c $powershellCmd")
+          # 4. Read the text file out loud onto the GitHub action logs
+          $logPath = "$env:TEMP\pinggy.log"
+          if (Test-Path $logPath) {
+              Get-Content $logPath
+          } else {
+              Write-Host "Log file not found yet. Retrying..."
+          }
           
-          # 4. Wait for the tunnel connection to initialize and display on screen
-          Start-Sleep -Seconds 10
-          
-          # 5. Keep the runner awake infinitely while you use the active tunnel
+          # 5. Keep streaming or block the runner so it doesn't shut down
+          Write-Host "Tunnel is live. Continuous keeping runner alive loop started..."
           while ($true) { Start-Sleep -Seconds 60 }
