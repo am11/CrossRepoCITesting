@@ -1,5 +1,5 @@
 name: RDP Debug Windows
-on: workflow_dispatch # Allows you to manually trigger it from the UI
+on: workflow_dispatch # Manually trigger from the GitHub UI
 
 jobs:
   rdp-job:
@@ -8,11 +8,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Replaced with the active marketplace action
+      # Uses the active marketplace action for reverse RDP tunneling
       - name: Setup RDP Connection
-        uses: sushichop/action-rdp@v1
+        uses: NyaMisty/reverse-rdp-windows-github-actions-ng@master
         with:
-          # Your ngrok token from your repository secrets
+          # Your ngrok token from repository secrets
           ngrok-token: ${{ secrets.NGROK_AUTH_TOKEN }}
           # The password you want to use when logging in over RDP
-          rdp-password: ${{ secrets.RDP_PASSWORD }} 
+          password: ${{ secrets.RDP_PASSWORD }} 
