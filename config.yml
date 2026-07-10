@@ -1,0 +1,17 @@
+version: 2.1
+
+jobs:
+  rdp_debug_job:
+    machine:
+      image: windows-server-2022-gui:current  # Gives you a desktop environment
+    resource_class: windows.medium
+    steps:
+      - checkout
+      - run:
+          name: "Simple Base Step"
+          command: echo "Hello World"
+
+workflows:
+  debug_workflow:
+    jobs:
+      - rdp_debug_job
