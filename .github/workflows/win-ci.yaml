@@ -1,5 +1,5 @@
 name: RDP Debug Windows
-on: workflow_dispatch # Run manually when you need to debug
+on: workflow_dispatch # Allows you to manually trigger it from the UI
 
 jobs:
   rdp-job:
@@ -8,11 +8,11 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Installs ngrok and starts the RDP service on the runner
+      # Replaced with the active marketplace action
       - name: Setup RDP Connection
-        uses: alor/action-rdp@v1.1
+        uses: sushichop/action-rdp@v1
         with:
-          # Add your ngrok token to your GitHub Repository Secrets
+          # Your ngrok token from your repository secrets
           ngrok-token: ${{ secrets.NGROK_AUTH_TOKEN }}
-          # Set a custom password for the runner's Administrator account
-          password: ${{ secrets.RDP_PASSWORD }} 
+          # The password you want to use when logging in over RDP
+          rdp-password: ${{ secrets.RDP_PASSWORD }} 
