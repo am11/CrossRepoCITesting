@@ -1,18 +1,27 @@
-name: RDP Debug Windows
-on: workflow_dispatch # Manually trigger from the GitHub UI
+name: Window 10
+
+on: [push, workflow_dispatch]
 
 jobs:
-  rdp-job:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+  build:
 
-      # Uses the active marketplace action for reverse RDP tunneling
-      - name: Setup RDP Connection
-        uses: NyaMisty/reverse-rdp-windows-github-actions-ng@master
-        with:
-          # Your ngrok token from repository secrets
-          ngrok-token: ${{ secrets.NGROK_AUTH_TOKEN }}
-          # The password you want to use when logging in over RDP
-          password: ${{ secrets.RDP_PASSWORD }} 
+    runs-on: windows-latest
+    timeout-minutes: 9999
+
+
+    steps:
+    - name: Download
+      run: Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip -OutFile ngrok.zip
+    - name: Extract
+      run: Expand-Archive ngrok.zip
+    - name: Auth
+      run: .\ngrok\ngrok.exe authtoken $Env:NGROK_AUTH_TOKEN
+      env:
+        NGROK_AUTH_TOKEN: ${{ secrets.NGROK_AUTH_TOKEN }}
+    - name: Enable TS
+      run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server'-name "fDenyTSConnections" -Value 0
+    - run: Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
+    - run: Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp' -name "UserAuthentication" -Value 1
+    - run: Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -AsPlainText "@cyb3rking" -Force)
+    - name: Create Tunnel
+      run: .\ngrok\ngrok.exe tcp 3389
