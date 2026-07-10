@@ -4,10 +4,8 @@ on: [workflow_dispatch]
 
 jobs:
   build:
-
     runs-on: windows-latest
-    timeout-minutes: 9999
-
+    timeout-minutes: 360 # Note: GitHub Actions automatically caps jobs at a max of 360 minutes (6 hours)
 
     steps:
       - name: Native RDP with Pinggy
@@ -19,15 +17,18 @@ jobs:
           Set-ItemProperty -Path 'HKLM:\System\CurrentControlSet\Control\Terminal Server' -Name "fDenyTSConnections" -Value 0
           Enable-NetFirewallRule -DisplayGroup "Remote Desktop"
           
-          # 2. Run the SSH tunnel inline inside a background thread job
-          $job = Start-ThreadJob -ScriptBlock {
-              ssh -p 443 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=10 -R 0:127.0.0.1:3389 tcp@free.pinggy.io
-          }
+          # 2. Build the non-interactive SSH tunnel command
+          # -T disables pseudo-terminal allocation to fix the CI runner crash
+          # -N tells it to only forward ports and not execute a remote command shell
+          $sshCmd = "ssh -p 443 -T -N -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ServerAliveInterval=10 -R 0:127.0.0.1:3389 tcp@free.pinggy.io"
           
-          # 3. Stream the live terminal output straight to the GitHub log
+          # 3. Execute the tunnel inside a standard background job
+          $job = Start-Job -ScriptBlock { iex $using:sshCmd }
+          
+          # 4. Wait for the connection to establish and fetch the output logs
           Write-Host "Waiting for Pinggy to generate your RDP address..."
-          Start-Sleep -Seconds 5
-          Receive-Job -Job $job -Keep
+          Start-Sleep -Seconds 7
+          Receive-Job -Job $job
           
-          # 4. Keep the runner awake while you use RDP
+          # 5. Loop infinitely to keep the GitHub runner from closing while you debug
           while ($true) { Start-Sleep -Seconds 60 }
