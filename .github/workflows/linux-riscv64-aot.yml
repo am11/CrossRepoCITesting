@@ -44,7 +44,7 @@ jobs:
           -e CORE_ROOT=/runtime/artifacts/tests/coreclr/linux.riscv64.Checked/Tests/Core_Root \
           --platform linux/riscv64 ubuntu \
           sh -c '
-          apt update && apt install -y file llvm &&
+          apt update && apt install -y file llvm libicu-dev &&
           mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-riscv64/native &&
           ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-riscv64/native;
 
