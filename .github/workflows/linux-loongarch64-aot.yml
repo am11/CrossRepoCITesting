@@ -34,7 +34,7 @@ jobs:
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-loongarch64 \
           sh -c '
           /runtime/build.sh -ci -arch loongarch64 -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols --bootstrap &&
-          SysRoot=$ROOTFS_DIR /runtime/src/tests/build.sh -ci -loongarch64 -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstarp -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
+          SysRoot=$ROOTFS_DIR /runtime/src/tests/build.sh -ci -loongarch64 -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstrap -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
           '
 
     - name: run tests in qemu
