@@ -60,7 +60,6 @@ jobs:
 
           while IFS=: read -r test _; do
             echo "Running $test..."
-            (cd "$(dirname "$test")/.." && "$test")
             exitcode=$(cd "$(dirname "$test")/.." && "$test"; echo $?)
             if [ "$exitcode" -ne 100 ]; then
               echo "$test failed with exit code $exitcode"
