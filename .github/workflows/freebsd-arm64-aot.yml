@@ -51,6 +51,7 @@ jobs:
         usesh: true
         sync: sshfs
         run: |
+          set +e
           pkg install -y llvm icu
           mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/freebsd-arm64/native
           ln -s /usr/local/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/freebsd-arm64/native
