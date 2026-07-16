@@ -17,20 +17,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: zero
-      run: curl -sSL https://raw.githubusercontent.com/am11/CrossRepoCITesting/refs/heads/master/cpufeatures.c -o /home/runner/work/cpufeatures.c
-
-    - name: first
-      uses: vmactions/freebsd-vm@v1
-      with:
-        arch: aarch64
-        envs: 'CORE_ROOT'
-        usesh: true
-        sync: sshfs
-        run: |
-          cc /home/runner/work/cpufeatures.c
-          ./a.out
-
     - name: Maximize build space
       uses: AdityaGarg8/remove-unwanted-software@v4.1
       with:
