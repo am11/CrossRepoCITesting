@@ -45,7 +45,7 @@ jobs:
           --platform linux/riscv64 alpine \
           sh -c '
           apk add file llvm icu-libs libatomic &&
-          mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-riscv64/native &&
+          mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-musl-riscv64/native &&
           ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-musl-riscv64/native;
 
           fail=0;
