@@ -46,7 +46,7 @@ jobs:
           sh -c '
           apk add file llvm icu-libs libatomic &&
           mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-loongarch64/native &&
-          ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-loongarch64/native;
+          ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-musl-loongarch64/native;
 
           fail=0;
           find /runtime/artifacts/tests/coreclr/linux.loongarch64.Checked/nativeaot/SmokeTests -path "*/native/*" -type f -exec file {} \; | grep ELF.*executable > test_list.txt
