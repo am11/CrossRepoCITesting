@@ -51,6 +51,8 @@ jobs:
           fail=0;
           find /runtime/artifacts/tests/coreclr/linux.loongarch64.Checked/nativeaot/SmokeTests -path "*/native/*" -type f -exec file {} \; | grep ELF.*executable > test_list.txt
 
+          export QEMU_STRACE=1
+
           while IFS=: read -r test _; do
             echo ">>> Running: $test"
             (cd "$(dirname "$test")/.." && "$test")
