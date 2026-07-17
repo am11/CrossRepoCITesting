@@ -37,6 +37,12 @@ jobs:
           SysRoot=$ROOTFS_DIR LinkerFlavor=lld /runtime/src/tests/build.sh -ci -riscv64 -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstrap -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
           '
 
+    - name: Upload NativeAOT Test Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: riscv64-nativeaot-tests
+        path: runtime/artifacts/tests
+
     - name: run tests in qemu
       run: |
         docker run --privileged --rm tonistiigi/binfmt --install all
