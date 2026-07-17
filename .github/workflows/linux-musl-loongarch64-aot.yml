@@ -45,7 +45,7 @@ jobs:
           --platform linux/loong64 loongarch64/alpine:3.21 \
           sh -c '
           apk add file llvm icu-libs libatomic &&
-          mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-loongarch64/native &&
+          mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/linux-musl-loongarch64/native &&
           ln -s /usr/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/linux-musl-loongarch64/native;
 
           fail=0;
