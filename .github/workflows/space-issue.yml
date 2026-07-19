@@ -29,7 +29,7 @@ jobs:
 
     - name: Clone Runtime
       run: |
-        git clone https://github.com/{{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         echo "git HEAD is at: $(git -C runtime rev-parse HEAD)"
 
     - name: Run Build and Capture Snapshots
@@ -68,7 +68,7 @@ jobs:
 
     - name: Clone Runtime
       run: |
-        git clone https://github.com/{{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
 
     - name: Run Build and Capture Snapshots
       run: |
