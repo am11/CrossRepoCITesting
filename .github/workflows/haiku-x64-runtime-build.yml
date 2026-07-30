@@ -2,6 +2,19 @@ name: haiku-x64 dotnet-runtime build
 
 on:
   workflow_dispatch:
+    inputs:
+      runtimeForkName:
+        description: fork
+        required: true
+        default: dotnet
+      runtimeRepohName:
+        description: repo
+        required: true
+        default: runtime
+      runtimeBranchName:
+        description: branch
+        required: true
+        default: main
 
 jobs:
   coreclr_Debug:
@@ -12,9 +25,9 @@ jobs:
       run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
     - name: runtime+libs+packs build
       run: |
-        git clone https://github.com/dotnet/runtime --single-branch --depth 1 -b darc-main-a5b5bc7e-08f0-4475-8658-430753b356f4
-        cd runtime
-        docker run --rm -v$(pwd):/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+        git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        git -C runtime rev-parse HEAD
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-haiku-amd64 \
           sh -c '
             /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Debug -rc Checked --bootstrap -gcc &&
