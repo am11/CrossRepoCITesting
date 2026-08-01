@@ -30,7 +30,7 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
-          /runtime/build.sh libs.native+host.native -c Debug -os illumos -cross -gcc --bootstrap;
+          /runtime/build.sh libs.native+host.native -c Debug -os illumos -cross -gcc;
           /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc --bootstrap'
         strings runtime/artifacts/bin/coreclr/illumos.x64.Debug/./libcoreclr.so | grep '@(#)Version'
 
