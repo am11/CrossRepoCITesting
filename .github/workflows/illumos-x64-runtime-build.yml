@@ -17,7 +17,7 @@ on:
         default: main
 
 jobs:
-  coreclr_Debug:
+  coreclr_Debug_gcc:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,11 +30,10 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
-          /runtime/build.sh libs.native+host.native -c Debug -os illumos -cross -gcc;
           /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross -gcc --bootstrap'
         strings runtime/artifacts/bin/coreclr/illumos.x64.Debug/./libcoreclr.so | grep '@(#)Version'
 
-  coreclr_Release:
+  coreclr_Release_gcc:
     runs-on: ubuntu-latest
 
     steps:
@@ -48,6 +47,38 @@ jobs:
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
           /runtime/build.sh clr+libs+packs -c Release -os illumos -cross -gcc --bootstrap'
+        strings runtime/artifacts/bin/coreclr/illumos.x64.Release/./libcoreclr.so | grep '@(#)Version'
+
+  coreclr_Debug_clang:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Remove unnecessary files
+      run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
+    - name: runtime+libs+packs build
+      run: |
+        git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        git -C runtime rev-parse HEAD
+        docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
+          apt install -y ninja-build --allow-unauthenticated;
+          /runtime/build.sh clr+libs+packs -c Debug -os illumos -cross --bootstrap'
+        strings runtime/artifacts/bin/coreclr/illumos.x64.Debug/./libcoreclr.so | grep '@(#)Version'
+
+  coreclr_Release_clang:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Remove unnecessary files
+      run: df -h; sudo rm -rf "$AGENT_TOOLSDIRECTORY"; df -h
+    - name: runtime+libs+packs build
+      run: |
+        git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        git -C runtime rev-parse HEAD
+        docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
+          apt install -y ninja-build --allow-unauthenticated;
+          /runtime/build.sh clr+libs+packs -c Release -os illumos -cross --bootstrap'
         strings runtime/artifacts/bin/coreclr/illumos.x64.Release/./libcoreclr.so | grep '@(#)Version'
 
   mono_Debug:
