@@ -33,7 +33,7 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-openbsd-7.8-amd64 \
           sh -c '
-          /runtime/build.sh -ci -arch x64 -os openbsd -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols true --bootstrap &&
+          /runtime/build.sh -ci -arch x64 -os openbsd -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols --bootstrap &&
           SysRoot=$ROOTFS_DIR /runtime/src/tests/build.sh -ci -arch x64 --os openbsd -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstrap -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
           '
 
