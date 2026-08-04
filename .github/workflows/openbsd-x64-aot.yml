@@ -1,0 +1,71 @@
+name: openbsd-x64 dotnet-runtime aot
+
+on:
+  workflow_dispatch:
+    inputs:
+      runtimeForkName:
+        description: fork
+        required: true
+        default: dotnet
+      runtimeBranchName:
+        description: branch
+        required: true
+        default: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Maximize build space
+      uses: AdityaGarg8/remove-unwanted-software@v4.1
+      with:
+        remove-dotnet: 'true'
+        remove-android: 'true'
+        remove-haskell: 'true'
+        remove-codeql: 'true'
+        remove-cached-tools: 'true'
+
+    - name: runtime, libs and nativeaot smoke tests build
+      run: |
+        git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+        echo "git HEAD is at: $(git -C runtime rev-parse HEAD)"
+        docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-openbsd-7.8-amd64 \
+          sh -c '
+          /runtime/build.sh -ci -arch x64 -os openbsd -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols true --bootstrap &&
+          SysRoot=$ROOTFS_DIR /runtime/src/tests/build.sh -ci -arch x64 --os openbsd -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstrap -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
+          '
+
+    - name: Reset permissions on runtime/artifacts
+      run: |
+        sudo chown -R $(whoami):$(whoami) runtime/artifacts
+
+    - name: run tests in qemu
+      uses: vmactions/openbsd-vm@v1
+      env:
+        CORE_ROOT: /home/runner/work/CrossRepoCITesting/CrossRepoCITesting/runtime/artifacts/tests/coreclr/openbsd.x64.Checked/Tests/Core_Root
+      with:
+        arch: x86_64
+        envs: 'CORE_ROOT'
+        usesh: true
+        sync: sshfs
+        run: |
+          pkg_add -y icu4c libinotify heimdal-libs openssl e2fsprogs
+          mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/openbsd-x64/native
+          ln -s /usr/local/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/openbsd-x64/native
+          fail=0
+          testsDir=/home/runner/work/CrossRepoCITesting/CrossRepoCITesting/runtime/artifacts/tests/coreclr/openbsd.x64.Checked/nativeaot/SmokeTests
+          find "$testsDir" -path "*/native/*" -type f -exec file {} \; | grep ELF.*executable > test_list.txt
+
+          while IFS=: read -r test _; do
+            echo "Running $test..."
+            (cd "$(dirname "$test")/.." && "$test")
+            exitcode=$?
+            if [ "$exitcode" -ne 100 ]; then
+              echo "$test failed with exit code $exitcode"
+              fail=1
+            fi
+          done < test_list.txt
+
+          if [ "$fail" -eq 1 ]; then exit 1; fi
