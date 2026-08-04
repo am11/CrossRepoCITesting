@@ -87,3 +87,4 @@ jobs:
             /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Release --bootstrap &&
             cd /tmp &&
             find /runtime/artifacts/bin -name "libcdacreader*" -exec file {} \;
+          '
