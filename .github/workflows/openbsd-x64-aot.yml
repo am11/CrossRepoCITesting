@@ -51,7 +51,7 @@ jobs:
         usesh: true
         sync: sshfs
         run: |
-          pkg_add icu4c libinotify heimdal-libs openssl% e2fsprogs
+          pkg_add icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs
           mkdir -p $CORE_ROOT/SuperFileCheck/runtimes/openbsd-x64/native
           ln -s /usr/local/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/openbsd-x64/native
           fail=0
