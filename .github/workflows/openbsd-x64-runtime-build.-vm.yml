@@ -30,7 +30,6 @@ jobs:
       uses: vmactions/openbsd-vm@v1
       with:
         arch: x86_64
-        envs: 'CORE_ROOT'
         usesh: true
         sync: sshfs
         run: |
