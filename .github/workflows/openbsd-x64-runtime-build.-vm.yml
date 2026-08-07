@@ -33,6 +33,22 @@ jobs:
         usesh: true
         sync: sshfs
         run: |
+          echo "=== 1. Active Mounts and Used Space ==="
+          df -h
+          
+          echo "=== 2. Mounted Filesystem Properties ==="
+          mount
+          
+          echo "=== 3. Available Hard Drive Identifiers ==="
+          sysctl hw.disknames
+          
+          echo "=== 4. Raw Disk Partitions ==="
+          # Prints the partition map for the main virtual hard drive (usually sd0 or wd0)
+          PRIMARY_DISK=$(sysctl -n hw.disknames | cut -d':' -f1)
+          if [ ! -z "$PRIMARY_DISK" ]; then
+            disklabel -h $PRIMARY_DISK
+          fi
+
           pkg_add -I icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs git bash python cmake ninja llvm%21
 
           dd if=/dev/null of=./host_backed_scratch.img bs=1G seek=100
