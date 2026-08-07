@@ -34,28 +34,15 @@ jobs:
         sync: sshfs
         run: |
           pkg_add -I icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs git bash python cmake ninja llvm%21
-          
-          # 1. Instantly create a 100GB sparse file using native OpenBSD dd
+
           dd if=/dev/null of=./host_backed_scratch.img bs=1G seek=100
-          
-          # 2. Configure it as a local loop disk device inside OpenBSD
           vnconfig vnd0 ./host_backed_scratch.img
-          
-          # 3. Format it natively with an OpenBSD local file system layout
           newfs vnd0c
-          
-          # 4. Mount it securely to a local path to isolate the entire build structure
-          mkdir -p /mnt/host_space
+          mkdir /mnt/host_space
           mount /dev/vnd0c /mnt/host_space
-          chmod 777 /mnt/host_space
-          
-          # 5. Route OpenBSD's global tmp allocations into this 100GB host-backed mount
           export TMPDIR=/mnt/host_space/tmp
-          mkdir -p $TMPDIR
-          chmod 777 $TMPDIR
-          
-          # 6. Clone and run your build scripts completely inside this pipeline
+          mkdir $TMPDIR
+
           cd /mnt/host_space
           git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-
-          ./runtime/src/coreclr/build-runtime.sh
+          runtime/src/coreclr/build-runtime.sh
