@@ -1,0 +1,40 @@
+
+name: openbsd-x64 build runtime in vm
+
+on:
+  workflow_dispatch:
+    inputs:
+      runtimeForkName:
+        description: fork
+        required: true
+        default: dotnet
+      runtimeBranchName:
+        description: branch
+        required: true
+        default: main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Free Disk Space (Ubuntu)
+      uses: insightsengineering/disk-space-reclaimer@v1
+      with:
+        android: true
+        dotnet: true
+        large-packages: false
+        swap-storage: true
+        tools-cache: true
+
+    - name: build runtime in vm
+      uses: vmactions/openbsd-vm@v1
+      with:
+        arch: x86_64
+        envs: 'CORE_ROOT'
+        usesh: true
+        sync: sshfs
+        run: |
+          pkg_add -I icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs
+          git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+          runtime/src/coreclr/build-runtime.sh
