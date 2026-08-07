@@ -35,8 +35,8 @@ jobs:
         run: |
           pkg_add -I icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs git bash python cmake ninja llvm%21
           
-          # 1. Provision a sparse 100GB image file pulling directly from the 110GB host pool
-          truncate -s 100G ./host_backed_scratch.img
+          # 1. Instantly create a 100GB sparse file using native OpenBSD dd
+          dd if=/dev/null of=./host_backed_scratch.img bs=1G seek=100
           
           # 2. Configure it as a local loop disk device inside OpenBSD
           vnconfig vnd0 ./host_backed_scratch.img
