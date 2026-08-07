@@ -34,5 +34,6 @@ jobs:
         sync: sshfs
         run: |
           pkg_add -I icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs git bash python cmake ninja llvm%21
-          git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1 /tmp/runtime
+          chown -R $(id -u):$(id -g) .
+          git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
           /tmp/runtime/src/coreclr/build-runtime.sh
