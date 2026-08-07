@@ -1,4 +1,3 @@
-
 name: openbsd-x64 build runtime in vm
 
 on:
