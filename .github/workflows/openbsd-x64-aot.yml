@@ -56,7 +56,7 @@ jobs:
           ln -s /usr/local/bin/llvm-dwarfdump $CORE_ROOT/SuperFileCheck/runtimes/openbsd-x64/native
           fail=0
           testsDir=/home/runner/work/CrossRepoCITesting/CrossRepoCITesting/runtime/artifacts/tests/coreclr/openbsd.x64.Checked/nativeaot/SmokeTests
-          find "$testsDir" -path "*/native/*" -type f -exec file {} \; | grep ELF | grep -vE '\.dbg:|\.so:' > test_list.txt
+          find "$testsDir" -path "*/native/*" -type f -exec efile {} \; | grep ELF.*executable > test_list.txt
 
           while IFS=: read -r test _; do
             echo "Running $test..."
