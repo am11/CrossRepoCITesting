@@ -33,32 +33,13 @@ jobs:
         usesh: true
         sync: sshfs
         run: |
-          echo "=== 1. Active Mounts and Used Space ==="
-          df -h
-          
-          echo "=== 2. Mounted Filesystem Properties ==="
-          mount
-          
-          echo "=== 3. Available Hard Drive Identifiers ==="
-          sysctl hw.disknames
-          
-          echo "=== 4. Raw Disk Partitions ==="
-          # Prints the partition map for the main virtual hard drive (usually sd0 or wd0)
-          PRIMARY_DISK=$(sysctl -n hw.disknames | cut -d':' -f1)
-          if [ ! -z "$PRIMARY_DISK" ]; then
-            disklabel -h $PRIMARY_DISK
-          fi
-
           pkg_add -I icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs git bash python cmake ninja llvm%21
-
-          dd if=/dev/null of=./host_backed_scratch.img bs=1G seek=100
-          vnconfig vnd0 ./host_backed_scratch.img
-          newfs vnd0c
-          mkdir /mnt/host_space
-          mount /dev/vnd0c /mnt/host_space
-          export TMPDIR=/mnt/host_space/tmp
-          mkdir $TMPDIR
-
-          cd /mnt/host_space
-          git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+          
+          # 1. Setup compilation directory natively in the huge /home partition
+          mkdir -p /home/runner/scratch_space/tmp
+          export TMPDIR=/home/runner/scratch_space/tmp
+          
+          # 2. Run the build completely inside native local storage
+          cd /home/runner/scratch_space
+          git clone https://github.com{{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
           runtime/src/coreclr/build-runtime.sh
