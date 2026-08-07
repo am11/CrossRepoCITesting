@@ -33,6 +33,6 @@ jobs:
         usesh: true
         sync: sshfs
         run: |
-          pkg_add -I icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs git
+          pkg_add -I icu4c libinotify heimdal-libs openssl%4.0 e2fsprogs git bash
           git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1 /tmp/runtime
           /tmp/runtime/src/coreclr/build-runtime.sh
