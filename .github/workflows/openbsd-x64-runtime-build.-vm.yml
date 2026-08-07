@@ -56,6 +56,6 @@ jobs:
           
           # 6. Clone and run your build scripts completely inside this pipeline
           cd /mnt/host_space
-          git clone https://github.com{{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
-          
+          git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
+
           ./runtime/src/coreclr/build-runtime.sh
