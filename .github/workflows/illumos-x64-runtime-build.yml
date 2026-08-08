@@ -27,7 +27,6 @@ jobs:
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         git -C runtime rev-parse HEAD
-        curl -sSL https://github.com/dotnet/runtime/pull/131700.diff | git -C runtime apply -
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
@@ -44,7 +43,6 @@ jobs:
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         git -C runtime rev-parse HEAD
-        curl -sSL https://github.com/dotnet/runtime/pull/131700.diff | git -C runtime apply -
         sed -i '/FORCEINLINE void\* memcpyNoGCRefs(void \* dest, const void \* src, size_t len)/,/}/ { /WRAPPER_NO_CONTRACT;/a\    if (len == 0) return dest;' runtime/src/coreclr/vm/common.h
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
@@ -62,7 +60,6 @@ jobs:
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         git -C runtime rev-parse HEAD
-        curl -sSL https://github.com/dotnet/runtime/pull/131700.diff | git -C runtime apply -
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
@@ -79,7 +76,6 @@ jobs:
       run: |
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         git -C runtime rev-parse HEAD
-        curl -sSL https://github.com/dotnet/runtime/pull/131700.diff | git -C runtime apply -
         docker run --rm -v$(pwd)/runtime:/runtime -w /runtime -e ROOTFS_DIR=/crossrootfs/x64 -e SED_SCRIPT="$SED_SCRIPT" \
           mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-22.04-cross-illumos sh -c 'apt update --allow-insecure-repositories &&
           apt install -y ninja-build --allow-unauthenticated;
