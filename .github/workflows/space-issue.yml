@@ -35,7 +35,7 @@ jobs:
     - name: Run Build and Capture Snapshots
       run: |
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-openbsd-amd64@sha256:496173363516799f0fb86ae2a03dffaa46bb07a40764997d7fef591cc4fd21ba \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-openbsd-amd64@sha256:496173363516799f0fb86ae2a03dffaa46bb07a40764997d7fef591cc4fd21ba \
           sh -c '
           ls -d /*/ | xargs du -sh > /runtime/before_openbsd 2>/dev/null
           
@@ -73,7 +73,7 @@ jobs:
     - name: Run Build and Capture Snapshots
       run: |
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-freebsd-14-amd64@sha256:368e1641ba6e57c9ae294e0a123ac0703227d30971a3e795c9ec2d7d36936790 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-freebsd-14-amd64@sha256:368e1641ba6e57c9ae294e0a123ac0703227d30971a3e795c9ec2d7d36936790 \
           sh -c '
           ls -d /*/ | xargs du -sh > /runtime/before_freebsd 2>/dev/null
           

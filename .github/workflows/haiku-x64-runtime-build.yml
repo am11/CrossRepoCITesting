@@ -28,7 +28,7 @@ jobs:
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         git -C runtime rev-parse HEAD
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-haiku-amd64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-haiku-amd64 \
           sh -c '
             /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Debug -rc Checked --bootstrap -gcc &&
             cd /tmp &&
@@ -46,7 +46,7 @@ jobs:
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         git -C runtime rev-parse HEAD
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-haiku-amd64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-haiku-amd64 \
           sh -c '
             /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Release --bootstrap -gcc &&
             cd /tmp &&
@@ -64,7 +64,7 @@ jobs:
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         git -C runtime rev-parse HEAD
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-haiku-amd64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-haiku-amd64 \
           sh -c '
             /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Debug -rc Checked --bootstrap &&
             cd /tmp &&
@@ -82,7 +82,7 @@ jobs:
         git clone https://github.com/${{ github.event.inputs.runtimeForkName }}/${{ github.event.inputs.runtimeRepohName }} runtime --branch ${{ github.event.inputs.runtimeBranchName }} --single-branch --depth 1
         git -C runtime rev-parse HEAD
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
-          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-3.0-net11.0-cross-haiku-amd64 \
+          mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-haiku-amd64 \
           sh -c '
             /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Release --bootstrap &&
             cd /tmp &&
