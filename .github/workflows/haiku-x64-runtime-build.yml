@@ -30,6 +30,7 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-haiku-amd64 \
           sh -c '
+          dnf install -y gzip;
             /runtime/build.sh -ci -arch x64 -os haiku -cross -s clr+libs+host -c Debug -rc Checked --bootstrap -gcc &&
             cd /tmp &&
             find /runtime/artifacts/bin -name "libcdacreader*" -exec file {} \;
