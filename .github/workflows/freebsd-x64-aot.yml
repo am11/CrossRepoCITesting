@@ -36,8 +36,8 @@ jobs:
           dnf install -y gzip gcc-c++;
           ln -s /usr/lib/gcc/x86_64-azurelinux-linux /usr/lib/gcc/x86_64-pc-linux-gnu;
           ln -s /usr/include/c++/15/x86_64-azurelinux-linux /usr/include/c++/15/x86_64-pc-linux-gnu;
-          /runtime/build.sh -ci -arch x64 -os freebsd -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols true --bootstrap &&
-          SysRoot=$ROOTFS_DIR LinkerFlavor=lld /runtime/src/tests/build.sh -ci -x64 -os freebsd -cross -nativeaot -tree:nativeaot -Checked -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -keepnativesymbols -p:UseLocalAppHostPack=true -p:UseNativeAotForComponents=true -p:TestNativeAot=true
+          /runtime/build.sh -ci -arch x64 -os freebsd -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols --bootstrap &&
+          /runtime/src/tests/build.sh -ci -x64 -os freebsd -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstrap -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
           '
 
     - name: Reset permissions on runtime/artifacts
