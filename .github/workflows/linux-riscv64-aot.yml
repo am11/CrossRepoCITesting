@@ -33,11 +33,8 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/riscv64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-riscv64 \
           sh -c '
-          dnf install -y gzip gcc-c++;
-          ln -s /usr/lib/gcc/x86_64-azurelinux-linux /usr/lib/gcc/x86_64-pc-linux-gnu;
-          ln -s /usr/include/c++/15/x86_64-azurelinux-linux /usr/include/c++/15/x86_64-pc-linux-gnu;
           /runtime/build.sh -ci -arch riscv64 -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols --bootstrap &&
-          SysRoot=$ROOTFS_DIR /runtime/src/tests/build.sh -ci -riscv64 -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstrap -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
+          /runtime/src/tests/build.sh -ci -riscv64 -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstrap -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
           '
 
     - name: run tests in qemu
