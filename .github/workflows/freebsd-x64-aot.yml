@@ -33,9 +33,6 @@ jobs:
         docker run --rm -v$(pwd)/runtime:/runtime -e ROOTFS_DIR=/crossrootfs/x64 \
           mcr.microsoft.com/dotnet-buildtools/prereqs:azurelinux-4.0-net11.0-cross-freebsd-14-amd64 \
           sh -c '
-          dnf install -y gzip gcc-c++;
-          ln -s /usr/lib/gcc/x86_64-azurelinux-linux /usr/lib/gcc/x86_64-pc-linux-gnu;
-          ln -s /usr/include/c++/15/x86_64-azurelinux-linux /usr/include/c++/15/x86_64-pc-linux-gnu;
           /runtime/build.sh -ci -arch x64 -os freebsd -cross -s clr+libs+host+packs+tools.cdac -c Debug -rc Checked --keepnativesymbols --bootstrap &&
           /runtime/src/tests/build.sh -ci -x64 -os freebsd -cross -nativeaot -tree:nativeaot -Checked -keepnativesymbols --use-bootstrap -p:TasksConfiguration=Debug -p:LibrariesConfiguration=Debug -p:TestNativeAot=true
           '
