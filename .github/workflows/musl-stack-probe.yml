@@ -1,0 +1,30 @@
+name: main-thread stack bounds probe (qemu riscv64)
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [musl-stack-probe]
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [alpine, ubuntu]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: probe under qemu
+      run: |
+        docker run --privileged --rm tonistiigi/binfmt --install all
+        docker run --rm -v $(pwd)/probes:/probes --platform linux/riscv64 ${{ matrix.image }} sh -c '
+          if command -v apk >/dev/null; then
+            apk add --no-cache gcc musl-dev >/dev/null
+          else
+            apt-get update -qq && apt-get install -y -qq gcc libc6-dev >/dev/null
+          fi
+          gcc -O1 -o /tmp/stackbounds /probes/stackbounds.c -lpthread &&
+          timeout 600 /tmp/stackbounds
+          '
