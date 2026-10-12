@@ -31,14 +31,14 @@ jobs:
     name: ${{ matrix.name }}
 
     steps:
-    - name: Maximize build space
-      uses: AdityaGarg8/remove-unwanted-software@v4.1
+    - name: Free Disk Space (Ubuntu)
+      uses: insightsengineering/disk-space-reclaimer@v1
       with:
-        remove-dotnet: 'true'
-        remove-android: 'true'
-        remove-haskell: 'true'
-        remove-codeql: 'true'
-        remove-cached-tools: 'true'
+        android: true
+        dotnet: true
+        large-packages: false
+        swap-storage: true
+        tools-cache: true
 
     - name: Build runtime and library tests
       run: |
@@ -62,8 +62,8 @@ jobs:
             CONFIG_ARGS="-c $CONFIG"
           fi
 
-          /runtime/build.sh -ci -arch riscv64 -cross clr+libs $CONFIG_ARGS --bootstrap &&
-          /runtime/build.sh -ci -arch riscv64 -cross libs.tests $CONFIG_ARGS --use-bootstrap -p:ArchiveTests=true
+          /runtime/build.sh clr+libs -ci -arch riscv64 -cross $CONFIG_ARGS --bootstrap &&
+          /runtime/build.sh libs.tests -ci -arch riscv64 -cross $CONFIG_ARGS --use-bootstrap -p:ArchiveTests=true
           '
 
     - name: Run library test suites in qemu
@@ -100,7 +100,7 @@ jobs:
 
             SUITE=$(basename "$ZIP" .zip)
 
-            echo ""
+            echo
             echo "[$CURRENT/$TOTAL] $SUITE"
 
             WORKDIR=/tmp/$SUITE
