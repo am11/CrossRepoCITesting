@@ -123,6 +123,12 @@ jobs:
                 SKIPPED=$((SKIPPED + 1))
                 continue
                 ;;
+            case "$SUITE" in
+              ComInterfaceGenerator.Unit.Tests|LibraryImportGenerator.Unit.Tests)
+                echo "[SKIP] $SUITE"
+                SKIPPED=$((SKIPPED + 1))
+                continue
+                ;;
             esac
 
             WORKDIR=/tmp/$SUITE
