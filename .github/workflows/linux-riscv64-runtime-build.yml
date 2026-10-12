@@ -31,6 +31,14 @@ jobs:
     name: ${{ matrix.name }}
 
     steps:
+    - name: Display workflow and matrix inputs
+      run: |
+        echo "runtimeForkName: ${{ github.event.inputs.runtimeForkName }}"
+        echo "runtimeBranchName: ${{ github.event.inputs.runtimeBranchName }}"
+        echo "matrix.name: ${{ matrix.name }}"
+        echo "matrix.config: ${{ matrix.config }}"
+        echo "matrix.runtimeConfig: ${{ matrix.runtimeConfig }}"
+
     - name: Free Disk Space (Ubuntu)
       uses: insightsengineering/disk-space-reclaimer@v1
       with:
