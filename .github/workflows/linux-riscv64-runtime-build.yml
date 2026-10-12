@@ -23,10 +23,11 @@ jobs:
           - name: checked
             config: Debug
             runtimeConfig: Checked
+            testhostConfig: Debug
 
           - name: release
             config: Release
-            runtimeConfig: ""
+            testhostConfig: Release
 
     name: ${{ matrix.name }}
 
@@ -38,6 +39,7 @@ jobs:
         echo "matrix.name: ${{ matrix.name }}"
         echo "matrix.config: ${{ matrix.config }}"
         echo "matrix.runtimeConfig: ${{ matrix.runtimeConfig }}"
+        echo "matrix.testhostConfig: ${{ matrix.testhostConfig }}"
 
     - name: Free Disk Space (Ubuntu)
       uses: insightsengineering/disk-space-reclaimer@v1
@@ -83,6 +85,7 @@ jobs:
           -v$(pwd)/runtime:/runtime \
           -e CONFIG=${{ matrix.config }} \
           -e RUNTIME_CONFIG=${{ matrix.runtimeConfig }} \
+          -e TESTHOST_CONFIG=${{ matrix.testhostConfig }} \
           ubuntu:24.04 \
           bash -c '
           set +e
@@ -90,8 +93,7 @@ jobs:
           apt update
           apt install -y unzip libicu-dev
 
-          RUNTIME_BUILD_CONFIG="${RUNTIME_CONFIG:-$CONFIG}"
-          RUNTIME_PATH="/runtime/artifacts/bin/testhost/net11.0-linux-${RUNTIME_BUILD_CONFIG}-riscv64"
+          RUNTIME_PATH="/runtime/artifacts/bin/testhost/net11.0-linux-${TESTHOST_CONFIG}-riscv64"
 
           echo "Runtime path: $RUNTIME_PATH"
 
