@@ -118,12 +118,6 @@ jobs:
             echo "[$CURRENT/$TOTAL] $SUITE"
 
             case "$SUITE" in
-              ComInterfaceGenerator.Unit.Tests)
-                echo "[SKIP] $SUITE"
-                SKIPPED=$((SKIPPED + 1))
-                continue
-                ;;
-            case "$SUITE" in
               ComInterfaceGenerator.Unit.Tests|LibraryImportGenerator.Unit.Tests)
                 echo "[SKIP] $SUITE"
                 SKIPPED=$((SKIPPED + 1))
