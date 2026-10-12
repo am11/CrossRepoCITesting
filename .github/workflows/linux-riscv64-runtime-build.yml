@@ -73,16 +73,19 @@ jobs:
         docker run --rm \
           --platform linux/riscv64 \
           -v$(pwd)/runtime:/runtime \
+          -e CONFIG=${{ matrix.config }} \
+          -e RUNTIME_CONFIG=${{ matrix.runtimeConfig }} \
           ubuntu:24.04 \
           bash -c '
           set +e
 
           apt update
-          apt install -y unzip curl libicu-dev
+          apt install -y unzip libicu-dev
 
-          curl -fsSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh
-          chmod +x dotnet-install.sh
-          ./dotnet-install.sh --channel STS --install-dir ~/.dotnet
+          RUNTIME_BUILD_CONFIG="${RUNTIME_CONFIG:-$CONFIG}"
+          RUNTIME_PATH="/runtime/artifacts/bin/testhost/net11.0-linux-${RUNTIME_BUILD_CONFIG}-riscv64"
+
+          echo "Runtime path: $RUNTIME_PATH"
 
           TEST_ROOT=/runtime/artifacts/helix/tests
 
@@ -119,7 +122,7 @@ jobs:
             (
               cd "$WORKDIR"
               chmod +x RunTests.sh
-              ./RunTests.sh --runtime-path ~/.dotnet
+              ./RunTests.sh --runtime-path "$RUNTIME_PATH"
             )
 
             RESULT=$?
